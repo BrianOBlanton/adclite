@@ -95,7 +95,7 @@ end
 % end
             
 [nrowQ,ncolQ]=size(Q);
-if ncolQ>1,error(err4);,end
+if ncolQ>1,error('Can only have one column in data');,end
 if nrowQ ~= length(x)
    error('length of scalar must be the same length as coordinate vectors')
 

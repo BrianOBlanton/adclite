@@ -31,5 +31,5 @@ function Handles=DrawTriSurf(Handles,GridId,Units,Field)
     FontSizes=getappdata(Handles.MainFigure,'FontSizes');
     set(get(Handles.ColorBar,'ylabel'),'String',Units,'FontSize',FontSizes(1));
 
-    drawnow 
+    %drawnow 
 end

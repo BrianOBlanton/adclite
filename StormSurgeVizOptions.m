@@ -48,4 +48,4 @@ p.ForkAxes=false;
 p.UITest=false;
 p.AppName='ADCL';
 
-p.BoundingBox=[-100 -60 7 47];
+p.BoundingBox=[      -78.684      -74.867       33.317        37.08];

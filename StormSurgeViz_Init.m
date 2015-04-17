@@ -118,6 +118,6 @@ ADCLOPTS.LocalDirectory='./';
 ADCLOPTS.TempDataLocation=[PWD '/TempData']; 
 ADCLOPTS.DateStringFormatInput='yyyy-mm-dd HH:MM:SS';
 ADCLOPTS.DateStringFormatOutput='ddd, dd mmm, HH:MM PM';
-ADCLOPTS.modelname='pre_00_CV_DB_two_prime_HS';
-ADCLOPTS.gridname='nc_inundation_v9.81_adjVAB_MSL';
+ADCLOPTS.ModelName='pre_00_CV_DB_two_prime_HS';
+ADCLOPTS.GridName='nc_inundation_v9.81_adjVAB_MSL';
 

@@ -13,7 +13,7 @@ function SetUIStatusMessage(varargin)
 
     StatusBarHandle=Handles.StatusBar;
     set(StatusBarHandle,'String',strrep(msg,'\n',''))
-    drawnow
+    %drawnow
  
     if getappdata(Handles.MainFigure,'SendDiagnosticsToCommandWindow')
         if exist('sendtocomwin','var')
