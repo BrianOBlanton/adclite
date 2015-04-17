@@ -125,6 +125,8 @@ Url.Units=ADCLOPTS.Units;
   
 %% load the RSM model
 global Model
+global TheGrids TheGrid
+
 [Model,TheGrid]=LoadRsmModel(ADCLOPTS.HOME,ADCLOPTS.ModelName,ADCLOPTS.GridName);
 
 
@@ -155,7 +157,6 @@ CurrentPointer=get(Handles.MainFigure,'Pointer');
 set(Handles.MainFigure,'Pointer','watch');
 
 %%
-global TheGrids 
 TheGrids{1}=TheGrid;
 
 
@@ -169,6 +170,16 @@ TheGrids{1}=TheGrid;
 %% MakeTheAxesMap
 SetUIStatusMessage('Making default plot ... \n')
 Handles=MakeTheAxesMap(Handles);  
+
+latitudeInterceptionParallel1.lon = [-82, -70];
+latitudeInterceptionParallel1.lat = [33.50, 33.50];
+latitudeInterceptionParallel4.lon = [-82, -70];
+latitudeInterceptionParallel4.lat = [36.00, 36.00];
+
+line(latitudeInterceptionParallel1.lon,latitudeInterceptionParallel1.lat,'Color','b')
+line(latitudeInterceptionParallel4.lon,latitudeInterceptionParallel4.lat,'Color','r')
+
+
 ThisData=NaN*ones(TheGrid.nn,1);
 ThisData(TheGrid.idx)=Model.R(1,:);
 Handles=DrawTriSurf(Handles,1,ADCLOPTS.Units,ThisData);
@@ -306,75 +317,6 @@ function DrawDepthContours(hObj,~)
 
 end
 
-%%  MakeTheAxesMap
-%%% MakeTheAxesMap
-%%% MakeTheAxesMap
-function Handles=MakeTheAxesMap(Handles)
-
-    global TheGrids Debug
-    if Debug,fprintf('SSViz++ Function = %s\n',ThisFunctionName);end
-   
-    TheGrid=TheGrids{1};
-
-    axes(Handles.MainAxes);
-    
-    FontSizes=getappdata(Handles.MainFigure,'FontSizes');    
-    SSVizOpts=getappdata(Handles.MainFigure,'SSVizOpts');              
-        ColorBarLocation=SSVizOpts.ColorBarLocation;
-        HOME=SSVizOpts.HOME;
-        DisableContouring=SSVizOpts.DisableContouring;
-
-    axx=SSVizOpts.BoundingBox;
-    if isnan(axx),axx=[min(TheGrid.x) max(TheGrid.x) min(TheGrid.y) max(TheGrid.y)];end
-    cla
-    
-    Handles.GridBoundary=plotbnd(TheGrid,'Color','k');
-    set(Handles.GridBoundary,'Tag','GridBoundary');
-    nz=2*ones(size(get(Handles.GridBoundary,'XData')));
-    set(Handles.GridBoundary,'ZData',nz)
-    axis('equal')
-    axis(axx)
-    grid on
-    box on
-    hold on
-    view(2)
-    
-    if ~isempty(which('contmex5'))  && ~DisableContouring
-        SetUIStatusMessage('** Drawing depth contours ... \n')
-        DepthContours=get(Handles.DepthContours,'String');
-        DepthContours=sscanf(DepthContours,'%d');
-        Handles.BathyContours=lcontour(TheGrid,TheGrid.z,DepthContours,'Color','k');
-        
-        for i=1:length(Handles.BathyContours)
-            nz=2*ones(size(get(Handles.BathyContours(i),'XData')));
-            set(Handles.BathyContours(i),'ZData',nz)
-        end
-        set(Handles.BathyContours,'Tag','BathyContours');
-    else
-        SetUIStatusMessage(sprintf('Contouring routine contmex5 not found for arch=%s.  Skipping depth contours.\n',computer))
-        set(Handles.DepthContours,'Enable','off')
-    end
- 
-%     if exist([HOME '/private/gomex_wdbII.cldat'],'file')
-%         load([HOME '/private/gomex_wdbII.cldat'])
-%         Handles.Coastline=line(gomex_wdbII(:,1),gomex_wdbII(:,2),...
-%             'Tag','Coastline');
-%     end
-    if exist([HOME '/private/states.cldat'],'file')
-        load([HOME '/private/states.cldat'])
-        Handles.States=line(states(:,1),states(:,2),'Tag','States');
-    end
-    
-    % add colorbar
-    Handles.ColorBar=colorbar('Location',ColorBarLocation);
-    set(Handles.ColorBar,'FontSize',FontSizes(2))
-    set(get(Handles.ColorBar,'ylabel'),'FontSize',FontSizes(1));
-    set(Handles.AxisLimits,'String',num2str(axx))
-
-    SetUIStatusMessage('** Done.\n')
-
-    
-end
 
 
 %%  DrawTrack
@@ -545,149 +487,6 @@ function DeleteVectors(varargin)
 end
 
 
-
-%%  UpdateUI
-%%% UpdateUI
-%%% UpdateUI
-function UpdateUI(varargin)
-
-    global Connections Debug TheGrids
-    if Debug,fprintf('SSViz++ Function = %s\n',ThisFunctionName);end
-
-    SetUIStatusMessage('Updating GUI ... \n')
-
-    if nargin==1
-        %disp('UpdateUI called as a function')
-        FigHandle=varargin{1};     
-    else
-        %disp('UpdateUI called as a callback')
-        %hObj=varargin{1};
-        %event=varargin{2};
-        FigHandle=gcbf;
-    end
-
-    Handles=get(FigHandle,'UserData');
-
-    SSVizOpts=getappdata(FigHandle,'SSVizOpts');
-
-    LocalTimeOffset=SSVizOpts.LocalTimeOffset;
-    GridName=SSVizOpts.GridName;
-    ModelName=SSVizOpts.ModelName;
-
-%     VariableNames=Connections.VariableNames; 
-%     VariableTypes=Connections.VariableTypes; 
-%     Scalars= find(strcmp(VariableTypes,'Scalar'));
-%     Vectors= find(strcmp(VariableTypes,'Vector'));
-%     
-%     % disable variable buttons according to NcTBHandle
-%     EnsembleClicked=get(get(Handles.EnsButtonHandlesGroup,'SelectedObject'),'string');
-%     EnsembleNames=Connections.EnsembleNames; 
-%     EnsIndex=find(strcmp(EnsembleClicked,EnsembleNames)); 
-    
-%     for i=1:length(Handles.ScalarVarButtonHandles)
-%         if ~isfield(Connections.members{EnsIndex,Scalars(i)},'NcTBHandle') || ... 
-%                 isempty(Connections.members{EnsIndex,Scalars(i)}.NcTBHandle)
-%             set(Handles.ScalarVarButtonHandles(i),'Enable','off')
-%         end
-%     end
-%     for i=1:length(Handles.ScalarVarButtonHandles)
-%         if ~isempty(Connections.members{EnsIndex,Scalars(i)}.NcTBHandle)
-%             set(Handles.ScalarVarButtonHandles(i),'Value',1)
-%             break
-%         end
-%     end
-    
-%     for i=1:length(Handles.VectorVarButtonHandles)
-%         if isempty(Connections.members{EnsIndex,Vectors(i)}.NcTBHandle) || ... 
-%                 isempty(Connections.members{EnsIndex,Vectors(i)}.NcTBHandle)
-%             set(Handles.VectorVarButtonHandles(i),'Enable','off')
-%         end
-%     end
-%     for i=1:length(Handles.VectorVarButtonHandles)
-%         if ~isempty(Connections.members{EnsIndex,Vectors(i)}.NcTBHandle)
-%             set(Handles.VectorVarButtonHandles(i),'Value',1)
-%             break
-%         end
-%     end
-    
-   
-%    ColorIncrement=getappdata(FigHandle,'ColorIncrement');
-%     Field=getappdata(Handles.TriSurf,'Field');
-%     %FontSizes=getappdata(Handles.MainFigure,'FontSizes');
-%     
-% %     set(Handles.Field_Maximum,'String',sprintf('Maximum = %f',max(Field)))
-% %     set(Handles.Field_Minimum,'String',sprintf('Minimum = %f',min(Field)))
-%     
-%     CMax=max(Field);
-%     CMax=ceil(CMax/ColorIncrement)*ColorIncrement;
-%     CMin=min(Field);
-%     CMin=floor(CMin/ColorIncrement)*ColorIncrement;
-%     ncol=(CMax-CMin)/ColorIncrement;
-%     
-%     set(Handles.CMax,'String',sprintf('%f',CMax))
-%     set(Handles.CMin,'String',sprintf('%f',CMin))
-%     set(Handles.NCol,'String',sprintf('%d',ncol))
-%     setappdata(FigHandle,'NumberOfColors',ncol);
-
-    str=sprintf('# Elements = %d\n# Nodes    = %d',size(TheGrids{1}.e,1), size(TheGrids{1}.x,1));
-
-
-%     if isfield(Connections,'RunProperties')
-%        rp=Connections.RunProperties;
-%        stormnumber=GetRunProperty(rp,'stormnumber');
-%        stormname=GetRunProperty(rp,'stormname');
-%        advnumber=GetRunProperty(rp,'advisory');
-%        ModelGrid=GetRunProperty(rp,'ADCIRCgrid');
-%        ModelName=GetRunProperty(rp,'Model');
-%        %Instance=GetRunProperty(rp,'instance');
-%        Instance=getappdata(FigHandle,'Instance');
-%        if strcmp(stormname,'STORMNAME')
-%            stormname='Nam-Driven';
-%            stormnumber='00';
-%            advnumber='N/A';
-%        end
-
-%        set(Handles.StormNumberName,'String',sprintf('%s/%s',stormnumber,stormname));
-%        set(Handles.AdvisoryNumber, 'String',advnumber)
-       set(Handles.ModelGridName,  'String',GridName)
-       set(Handles.ModelGridNums,  'String',str)
-       set(Handles.ModelName,      'String',ModelName)
-%        set(Handles.InstanceName,   'String',Instance)
-
-%        temp=GetRunProperty(rp,'RunStartTime');
-%        yyyy=str2double(temp(1:4));
-%        mm=str2double(temp(5:6));
-%        dd=str2double(temp(7:8));
-%        hr=str2double(temp(9:10));
-%        t1=datenum(yyyy,mm,dd,hr,0,0);
-%        set(Handles.ForecastStartTime,'String',sprintf('%s',datestr(t1+LocalTimeOffset/24,0)))
-%        
-%        temp=GetRunProperty(rp,'RunEndTime');
-%        yyyy=str2double(temp(1:4));
-%        mm=str2double(temp(5:6));
-%        dd=str2double(temp(7:8));
-%        hr=str2double(temp(9:10));
-%        t2=datenum(yyyy,mm,dd,hr,0,0);
-%        set(Handles.ForecastEndTime,'String',sprintf('%s',datestr(t2+LocalTimeOffset/24,0)))
-%     end
-    
-
-%    set(Handles.UnitsString,   'String',Units)
-%    set(Handles.TimeOffsetString,   'String',LocalTimeOffset)
-% 
-%     if isempty(Connections.Tracks{1})
-%         set(Handles.ShowTrackButton,'String','No Track to Show')
-%         set(Handles.ShowTrackButton,'Enable','off')
-%     else
-%         set(Handles.ShowTrackButton,'String','Show Track')
-%         set(Handles.ShowTrackButton,'Enable','on')
-%     end
-
-    set(FigHandle,'UserData',Handles);
-    SetUIStatusMessage('* Done.\n\n')
-    set(Handles.MainFigure,'Pointer','arrow');
-
-end
 
 %%  ClearUI
 %%% ClearUI
@@ -1666,51 +1465,7 @@ function CLim(clm)
 end
 
 
-%%  SetCLims
-function SetCLims(~,~)
 
-    FigThatCalledThisFxn=gcbf;
-    Handles=get(FigThatCalledThisFxn,'UserData');
-    axes(Handles.MainAxes);
-
-    PossibleMaps=cellstr(get(Handles.ColormapSetter,'String'));
-    CurrentValue=get(Handles.ColormapSetter,'Value');
-    CurrentMap=PossibleMaps{CurrentValue};
-    NumCols=get(Handles.NCol,'String');
-    CMin=get(Handles.CMin,'String');
-    CMax=get(Handles.CMax,'String');
-    CLim([str2double(CMin) str2double(CMax)])
-    eval(sprintf('cmap=colormap(%s(%s));',CurrentMap,NumCols))    
-    FlipCMap=get(Handles.FlipCMap,'Value');
-    if FlipCMap,cmap=flipud(cmap);end
-    colormap(cmap)
-    
-end
-
-%%  SetColorMap
-function SetColorMap(hObj,~) 
-
-    FigThatCalledThisFxn=gcbf;
-    Handles=get(FigThatCalledThisFxn,'UserData');
-    axes(Handles.MainAxes);
-
-    val = get(hObj,'Value');
-    if val==1
-        nc=size(colormap,1);
-        colormap(noaa_cmap(nc));
-    elseif val ==2
-        colormap(jet)
-    elseif val == 3
-        colormap(hsv)
-    elseif val == 4
-        colormap(hot)
-    elseif val == 5
-        colormap(cool)
-    elseif val == 6
-        colormap(gray)
-    end
-    
-end
 
 %%  SetColors
 function SetColors(Handles,minThisData,maxThisData,NumberOfColors,ColorIncrement)

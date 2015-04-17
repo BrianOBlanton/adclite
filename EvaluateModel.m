@@ -1,5 +1,5 @@
 function EvaluateModel(hObj,~)
-   global  Debug
+   global  Debug Model  ADCLOPTS TheGrid
    if Debug
        fprintf('SSViz++ Function = %s\n',ThisFunctionName)
        hObj;
@@ -15,6 +15,15 @@ function EvaluateModel(hObj,~)
    P5=get(Handles.ParameterControlsParameter(5),'String');P5=str2double(P5);
    P6=get(Handles.ParameterControlsParameter(6),'String');P6=str2double(P6);
    
+   X=[P1 P2 P3 P4 P5 P6]';
    
+   zhat = central_ckv(Model.P, Model.R, Model.c, Model.k, Model.weights, Model.n_d, Model.index, X);
    
+    ThisData=NaN*ones(TheGrid.nn,1);
+    ThisData(TheGrid.idx)=zhat;
+    Handles=DrawTriSurf(Handles,1,ADCLOPTS.Units,ThisData);
+    set(FigHandle,'UserData',Handles);
+    
+    UpdateUI(FigHandle);
+
 end

@@ -46,6 +46,7 @@ p.GoogleMapsApiKey='';
 p.SendDiagnosticsToCommandWindow=true;
 p.ForkAxes=false;
 p.UITest=false;
-p.AppName='ADCL';
 
-p.BoundingBox=[      -78.684      -74.867       33.317        37.08];
+%p.BoundingBox=[      -85 -70        27       42];
+p.BoundingBox=[   -79.156      -74.362       32.624       37.418];
+
