@@ -1,5 +1,9 @@
 function [Model,TheGrid]=LoadRsmModel(HOME,ModelName,GridName)
 
+global Debug
+if Debug,fprintf('SSViz++ Function = %s\n',ThisFunctionName);end
+
+
 temp=sprintf('%s/Model/%s.mat',HOME,ModelName);
 temp=load(temp);
 com=sprintf('Model=temp.%s;',ModelName);

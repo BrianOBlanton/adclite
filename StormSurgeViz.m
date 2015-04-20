@@ -122,15 +122,7 @@ Url.CurrentSelection=NaN;
 Url.Base=UrlBase;
 Url.Units=ADCLOPTS.Units;
 
-  
-%% load the RSM model
-global Model
-global TheGrids TheGrid
-
-[Model,TheGrid]=LoadRsmModel(ADCLOPTS.HOME,ADCLOPTS.ModelName,ADCLOPTS.GridName);
-
-
-
+ 
 %% InitializeUI
 Handles=InitializeUI(ADCLOPTS);
 
@@ -138,6 +130,7 @@ setappdata(Handles.MainFigure,'SSVizOpts',ADCLOPTS);
 setappdata(Handles.MainFigure,'Url',Url);
 setappdata(Handles.MainFigure,'DateStringFormatInput',ADCLOPTS.DateStringFormatInput);
 setappdata(Handles.MainFigure,'DateStringFormatOutput',ADCLOPTS.DateStringFormatOutput);
+setappdata(Handles.MainFigure,'TempDataLocation',ADCLOPTS.TempDataLocation);
 setappdata(Handles.MainFigure,'TempDataLocation',ADCLOPTS.TempDataLocation);
 
 set(Handles.MainFigure,'UserData',Handles);
@@ -156,7 +149,13 @@ EnableRendererKludge=false;
 CurrentPointer=get(Handles.MainFigure,'Pointer');
 set(Handles.MainFigure,'Pointer','watch');
 
-%%
+
+%% load the RSM model
+global Model
+global TheGrids TheGrid
+SetUIStatusMessage('Loading RSM ... \n')
+[Model,TheGrid]=LoadRsmModel(ADCLOPTS.HOME,ADCLOPTS.ModelName,ADCLOPTS.GridName);
+
 TheGrids{1}=TheGrid;
 
 
@@ -179,10 +178,23 @@ latitudeInterceptionParallel4.lat = [36.00, 36.00];
 line(latitudeInterceptionParallel1.lon,latitudeInterceptionParallel1.lat,'Color','b')
 line(latitudeInterceptionParallel4.lon,latitudeInterceptionParallel4.lat,'Color','r')
 
-
+% evaluate the default response, in the vector X of Model
+P1=get(Handles.ParameterControlsParameter(1),'String');P1=str2double(P1);
+P2=get(Handles.ParameterControlsParameter(2),'String');P2=str2double(P2);
+P3=get(Handles.ParameterControlsParameter(3),'String');P3=str2double(P3);
+P4=get(Handles.ParameterControlsParameter(4),'String');P4=str2double(P4);
+P5=get(Handles.ParameterControlsParameter(5),'String');P5=str2double(P5);
+P6=get(Handles.ParameterControlsParameter(6),'String');P6=str2double(P6);
+X=[P1 P2 P3 P4 P5 P6]';
+zhat = central_ckv(Model.P, Model.R, Model.c, Model.k, Model.weights, Model.n_d, Model.index, X);
 ThisData=NaN*ones(TheGrid.nn,1);
-ThisData(TheGrid.idx)=Model.R(1,:);
+ThisData(TheGrid.idx)=zhat;
 Handles=DrawTriSurf(Handles,1,ADCLOPTS.Units,ThisData);
+set(Handles.MainFigure,'UserData',Handles);
+
+SetColors(Handles,min(ThisData),max(ThisData),ADCLOPTS.NumberOfColors,ADCLOPTS.ColorIncrement);
+
+UpdateUI(Handles.MainFigure);
 
 
 RendererKludge;  %% dont ask...
@@ -201,8 +213,7 @@ set(Handles.UnitsString,'String',ADCLOPTS.Units);
 %set(Handles.TimeOffsetString,'String',ADCLOPTS.LocalTimeOffset)
 set(Handles.MainFigure,'UserData',Handles);
 
-UpdateUI(Handles.MainFigure);
-SetTitle('ADCLITE TEST');
+SetTitle(ADCLOPTS.AppName);
 
 % Final UI tweaks; based on availible files
 % if isempty(Connections.Tracks{1})
@@ -253,31 +264,6 @@ function BrowseFileSystem(~,~)
     set(Handles.ServerInfoString,'String',['file://' directoryname]);
     ClearUI(FigThatCalledThisFxn);
     
-end
-
-
-
-%%  SetBaseMap
-%%% SetBaseMap
-%%% SetBaseMap
-function SetBaseMap(~,~,~)
-
-    global Debug
-   if Debug,fprintf('SSViz++ Function = %s\n',ThisFunctionName);end
-
-    FigThatCalledThisFxn=gcbf;
-    Handles=get(FigThatCalledThisFxn,'UserData');
-    GoogleMapsApiKey=getappdata(Handles.MainFigure,'GoogleMapsApiKey');
-    %EnsembleClicked=get(get(Handles.EnsButtonHandlesGroup,'SelectedObject'),'string');
-    MapTypeClicked=get(get(Handles.BaseMapButtonGroup,'SelectedObject'),'string');
-    
-    if strcmp(MapTypeClicked,'none')
-        delete(findobj(Handles.MainAxes,'Type','image','Tag','gmap'))
-    else
-        axes(Handles.MainAxes);
-        plot_google_map('MapType',MapTypeClicked,'ApiKey',GoogleMapsApiKey,'AutoAxis',0)
-    end
-
 end
 
 %%  DrawDepthContours
@@ -1467,23 +1453,6 @@ end
 
 
 
-%%  SetColors
-function SetColors(Handles,minThisData,maxThisData,NumberOfColors,ColorIncrement)
-
-     FieldMax=ceil(maxThisData/ColorIncrement)*ColorIncrement;
-     FieldMin=floor(minThisData/ColorIncrement)*ColorIncrement;
-
-     set(Handles.CMax,'String',sprintf('%.2f',FieldMax))
-     set(Handles.CMin,'String',sprintf('%.2f',FieldMin))
-     set(Handles.NCol,'String',sprintf('%d',NumberOfColors))
-     PossibleMaps=cellstr(get(Handles.ColormapSetter,'String'));
-     CurrentValue=get(Handles.ColormapSetter,'Value');
-     CurrentMap=PossibleMaps{CurrentValue};
-     cmap=eval(sprintf('%s(%d)',CurrentMap,NumberOfColors));
-     CLim([FieldMin FieldMax])
-     colormap(cmap)
-     
-end
 
 %%  GetColors
 % function [minThisData,maxThisData,NumberOfColors]=GetColors(Handles)

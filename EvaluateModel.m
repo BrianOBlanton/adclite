@@ -22,6 +22,9 @@ function EvaluateModel(hObj,~)
     ThisData=NaN*ones(TheGrid.nn,1);
     ThisData(TheGrid.idx)=zhat;
     Handles=DrawTriSurf(Handles,1,ADCLOPTS.Units,ThisData);
+    
+    SetColors(Handles,min(ThisData),max(ThisData),ADCLOPTS.NumberOfColors,ADCLOPTS.ColorIncrement);
+
     set(FigHandle,'UserData',Handles);
     
     UpdateUI(FigHandle);
