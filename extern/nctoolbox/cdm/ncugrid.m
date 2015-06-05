@@ -3,6 +3,7 @@
 %            >> dataset = ncugrid(uri);
 %
 % NCTOOLBOX (http://code.google.com/p/nctoolbox)
+%{
 classdef ncugrid < handle
     
     properties (SetAccess = private)
@@ -693,3 +694,4 @@ classdef ncugrid < handle
     end % end methods
     
 end % end class
+%}
