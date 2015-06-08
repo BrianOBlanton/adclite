@@ -89,20 +89,20 @@ if ~usejava('jvm')
     errordlg(str)
     return
 end
-
-if java.lang.Runtime.getRuntime.maxMemory/1e9  < 0.5
-    str={'Java Heap Space is < 1Gb.  For big model grids, this may '
-        'be too small.  Increase Java Heap Memory through the MATLAB '
-        'preferences.  This message is non-fatal, but if strange '
-        'behavior occurs, then increase the java memory available. ' 
-        ' '
-        'More info on MATLAB ahd Java Heap Memory can '
-        'be found at this URL:'
-        ' '
-        'http://www.mathworks.com/support/solutions/en/data/1-18I2C/'};
-    msgbox(str)
-end
-    
+% 
+% if java.lang.Runtime.getRuntime.maxMemory/1e9  < 0.5
+%     str={'Java Heap Space is < 1Gb.  For big model grids, this may '
+%         'be too small.  Increase Java Heap Memory through the MATLAB '
+%         'preferences.  This message is non-fatal, but if strange '
+%         'behavior occurs, then increase the java memory available. ' 
+%         ' '
+%         'More info on MATLAB ahd Java Heap Memory can '
+%         'be found at this URL:'
+%         ' '
+%         'http://www.mathworks.com/support/solutions/en/data/1-18I2C/'};
+%     msgbox(str)
+% end
+%     
 %% Initialize StormSurgeViz
 fprintf('\nSSViz++ Initializing application.\n')
 global ADCLOPTS
@@ -123,6 +123,15 @@ Url.Base=UrlBase;
 Url.Units=ADCLOPTS.Units;
 
  
+%% load the RSM model
+global Model
+global TheGrids TheGrid
+fprintf('SSViz++ Loading RSM ... \n')
+[Model,TheGrid]=LoadRsmModel(ADCLOPTS.HOME,ADCLOPTS.ModelName,ADCLOPTS.GridName);
+
+TheGrids{1}=TheGrid;
+
+
 %% InitializeUI
 Handles=InitializeUI(ADCLOPTS);
 
@@ -148,23 +157,6 @@ EnableRendererKludge=false;
 
 CurrentPointer=get(Handles.MainFigure,'Pointer');
 set(Handles.MainFigure,'Pointer','watch');
-
-
-%% load the RSM model
-global Model
-global TheGrids TheGrid
-SetUIStatusMessage('Loading RSM ... \n')
-[Model,TheGrid]=LoadRsmModel(ADCLOPTS.HOME,ADCLOPTS.ModelName,ADCLOPTS.GridName);
-
-TheGrids{1}=TheGrid;
-
-
-%% SetEnsembleControls
-
-%% SetVariableControls
-
-
-%% SetSnapshotControls 
 
 %% MakeTheAxesMap
 SetUIStatusMessage('Making default plot ... \n')
@@ -195,7 +187,6 @@ set(Handles.MainFigure,'UserData',Handles);
 SetColors(Handles,min(ThisData),max(ThisData),ADCLOPTS.NumberOfColors,ADCLOPTS.ColorIncrement);
 
 UpdateUI(Handles.MainFigure);
-
 
 RendererKludge;  %% dont ask...
 

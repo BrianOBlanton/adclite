@@ -35,8 +35,8 @@ fs3=floor(get(0,'DefaultAxesFontSize')/ratio_x)+FontOffset;
 fs2=fs3+2;
 fs1=fs3+4;
 fs0=fs3+6;
-global Vecs
-Vecs='on';
+%global Vecs
+%Vecs='on';
 
 %LeftEdge=.01;
 
@@ -290,7 +290,7 @@ Handles.MainAxes=axes(...
 
 StatusUrlBarContainerContainerContents;
 ControlPanelContainerContents;
-VectorOptionsPanelContainerContents;
+%VectorOptionsPanelContainerContents;
 InformationPanelContainerContents;
 GraphicOutputControlContainerContents;
 BackgroundMapsContainerContents;
