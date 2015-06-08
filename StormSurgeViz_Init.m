@@ -5,12 +5,6 @@ PWD=pwd;
 HOME=fileparts(which(mfilename));
 addpath([HOME '/extern'])
 
-% need to set up main java path before setting any global variables
-if isempty(which('ncgeodataset')) || isempty(javaclasspath('-dynamic'))
-    cd([HOME '/extern/nctoolbox'])
-    setup_nctoolbox;
-end
-
 if isempty(which('detbndy'))
     cd([HOME '/util'])
     ssinit
