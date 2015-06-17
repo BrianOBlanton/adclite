@@ -127,7 +127,7 @@ Url.Units=ADCLOPTS.Units;
 global Model
 global TheGrids TheGrid
 fprintf('SSViz++ Loading RSM ... \n')
-[Model,TheGrid]=LoadRsmModel(ADCLOPTS.HOME,ADCLOPTS.ModelName,ADCLOPTS.GridName);
+[Model,TheGrid]=LoadRsmModel(ADCLOPTS.ADCLHOME,ADCLOPTS.ModelDir,ADCLOPTS.ModelFile,ADCLOPTS.ModelURL,ADCLOPTS.ModelName,ADCLOPTS.GridName);
 
 TheGrids{1}=TheGrid;
 
