@@ -106,11 +106,13 @@ end
 
 if isdeployed
     if ~exist(ADCLHOME, 'dir')
+        fprintf(sprintf('\nSSViz++ Creating ADCLHOME at %s.\n', ADCLHOME))
         mkdir(ADCLHOME)
     end
 end
 
 if ~exist(TempDataLocation,'dir')
+    fprintf(sprintf('\nSSViz++ Creating TempData at %s.\n', TempDataLocation))
     mkdir(TempDataLocation)
 end
 

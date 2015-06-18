@@ -7,8 +7,15 @@ MODELHOME=fullfile(ADCLHOME, ModelDir);
 MODELPATH=fullfile(ADCLHOME, ModelFile)
 
 if ~exist(MODELHOME,'dir')
+    fprintf('\nSSViz++ Downloading model.\n')
     ModelTar=websave(MODELPATH, ModelURL)
+    fprintf('\nSSViz++ Model downloaded.\n')
+    fprintf('\nSSViz++ Expanding model data.\n')
     untar(ModelTar, ADCLHOME)
+    fprintf('\nSSViz++ Model data expanded.\n')
+else
+    fprintf('\nSSViz++ Model aldready exists.\n')
+
 end
 
 temp=sprintf('%s/%s/%s.mat', ADCLHOME, ModelDir, ModelName);
