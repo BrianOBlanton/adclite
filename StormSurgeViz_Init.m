@@ -3,6 +3,16 @@ function ADCLOPTS=StormSurgeViz_Init(varargin)
 PWD=pwd;
 
 HOME=fileparts(which(mfilename));
+
+USERHOME=HOME;
+if isdeployed
+    if ispc
+        USERHOME=getenv('USERPROFILE');
+    else
+        USERHOME=getenv('HOME');
+    end
+end
+
 addpath([HOME '/extern'])
 
 if isempty(which('detbndy'))
@@ -24,9 +34,24 @@ set(0,'DefaultAxesTickDir','out')
 set(0,'DefaultFigureRenderer','zbuffer');
 
 LocalDirectory='./';
-TempDataLocation=[PWD '/TempData']; 
+AdclDirectory='.adclite';
+ADCLHOME=HOME;
+if isdeployed
+    ADCLHOME=fullfile(USERHOME, AdclDirectory);
+end
+TempDataDirectory='/TempData';
+TempDataLocation=[PWD TempDataDirectory]; 
+if isdeployed
+    TempDataLocation=fullfile(ADCLHOME, TempDataDirectory);
+end
 DateStringFormatInput='yyyy-mm-dd HH:MM:SS';
 DateStringFormatOutput='ddd, dd mmm, HH:MM PM';
+ModelName='pre_00_CV_DB_two_prime_HS';
+GridName='nc_inundation_v9.81_adjVAB_MSL';
+ModelDir='Model';
+ModelFile='Model.tar';
+ModelURL='http://people.renci.org/~bblanton/data/Model.tar';
+
 
 % name of Java Topology Suite file
 jts='jts-1.9.jar';
@@ -79,7 +104,15 @@ if isempty(which('shapewrite'))
     ADCLOPTS.CanOutputShapeFiles=false;
 end
 
+if isdeployed
+    if ~exist(ADCLHOME, 'dir')
+        fprintf(sprintf('\nSSViz++ Creating ADCLHOME at %s.\n', ADCLHOME))
+        mkdir(ADCLHOME)
+    end
+end
+
 if ~exist(TempDataLocation,'dir')
+    fprintf(sprintf('\nSSViz++ Creating TempData at %s.\n', TempDataLocation))
     mkdir(TempDataLocation)
 end
 
@@ -108,10 +141,15 @@ global Debug
 Debug=ADCLOPTS.Debug;
 
 ADCLOPTS.HOME=HOME;
-ADCLOPTS.LocalDirectory='./';
-ADCLOPTS.TempDataLocation=[PWD '/TempData']; 
-ADCLOPTS.DateStringFormatInput='yyyy-mm-dd HH:MM:SS';
-ADCLOPTS.DateStringFormatOutput='ddd, dd mmm, HH:MM PM';
-ADCLOPTS.ModelName='pre_00_CV_DB_two_prime_HS';
-ADCLOPTS.GridName='nc_inundation_v9.81_adjVAB_MSL';
+ADCLOPTS.USERHOME=USERHOME;
+ADCLOPTS.ADCLHOME=ADCLHOME;
+ADCLOPTS.LocalDirectory=LocalDirectory;
+ADCLOPTS.TempDataLocation=TempDataLocation; 
+ADCLOPTS.DateStringFormatInput=DateStringFormatInput;
+ADCLOPTS.DateStringFormatOutput=DateStringFormatOutput;
+ADCLOPTS.ModelName=ModelName;
+ADCLOPTS.GridName=GridName;
+ADCLOPTS.ModelDir=ModelDir;
+ADCLOPTS.ModelFile=ModelFile;
+ADCLOPTS.ModelURL=ModelURL;
 
