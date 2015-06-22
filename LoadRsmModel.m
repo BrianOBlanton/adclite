@@ -4,10 +4,10 @@ global Debug
 if Debug,fprintf('SSViz++ Function = %s\n',ThisFunctionName);end
 
 MODELHOME=fullfile(ADCLHOME, ModelDir);
-MODELPATH=fullfile(ADCLHOME, ModelFile)
+MODELPATH=fullfile(ADCLHOME, ModelFile);
 
 if ~exist(MODELHOME,'dir')
-    fprintf('\nSSViz++ Downloading model.\n')
+    fprintf('\nSSViz++ Downloading model.  This may take several minutes ... \n')
     ModelTar=websave(MODELPATH, ModelURL)
     fprintf('\nSSViz++ Model downloaded.\n')
     fprintf('\nSSViz++ Expanding model data.\n')

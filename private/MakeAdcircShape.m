@@ -1,5 +1,5 @@
-function [SS,edges,spec]=MakeShape(fgs,q,bin_centers,varargin)
-% [SS,spec,edges]=MakeShape(fgs,q,bin_centers,p1,v1,p2,v2,...);
+function [SS,edges,spec]=MakeAdcircShape(fgs,q,bin_centers,varargin)
+% [SS,spec,edges]=MakeAdcircShape(fgs,q,bin_centers,p1,v1,p2,v2,...);
 %
 %   WriteShape(SS,OutName)
 %   ShowShape(SS,edges,spec)
