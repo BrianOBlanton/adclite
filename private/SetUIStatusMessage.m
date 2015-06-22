@@ -8,7 +8,7 @@ function SetUIStatusMessage(varargin)
         sendtocomwin=varargin{2};
     end
 
-    MainFigure=findobj(0,'Tag','MainVizAppFigure');
+    MainFigure=findobj(0,'Tag','MainAdcLVizAppFigure');
     Handles=get(MainFigure,'UserData');
 
     StatusBarHandle=Handles.StatusBar;

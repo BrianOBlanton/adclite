@@ -1,4 +1,4 @@
-function ADCLOPTS=StormSurgeViz_Init(varargin)
+function ADCLOPTS=AdcircLite_Init(varargin)
 
 PWD=pwd;
 
@@ -22,11 +22,10 @@ end
 
 cd(PWD)
 
-%global SSVizOpts
-
+%global ADCLOPTS
 
 %if ~exist('varargin','var')
-%    error([mfilename ' cannot be called directly. Call StormSurgeViz instead.'])
+%    error([mfilename ' cannot be called directly. Call AdcircLite instead.'])
 %end
 
 set(0,'DefaultUIControlFontName','Courier')
@@ -52,19 +51,15 @@ ModelDir='Model';
 ModelFile='Model.tar';
 ModelURL='http://people.renci.org/~bblanton/data/Model.tar';
 
-
 % name of Java Topology Suite file
 jts='jts-1.9.jar';
 
 %% Default PN/PVs
-fprintf('SSViz++ Processing Input Parameter/Value Pairs...\n')
-opts=StormSurgeVizOptions;
+fprintf('AdcL++ Processing Input Parameter/Value Pairs...\n')
+opts=AdcircLiteOptions;
 opts=parseargs(opts);
 
-
-
-% now process varargins, which will override any parameters set in
-% MyStormSurge_Init.m
+% now process varargins
 opts=parseargs(opts,varargin{:});
 
 ADCLOPTS=opts;
@@ -74,10 +69,10 @@ ADCLOPTS.Storm=lower(ADCLOPTS.Storm);
 %DisplayWidth=scc(3);
 
 ADCLOPTS.AppName=blank(fileread('ThisVersion'));
-fprintf('SSViz++ %s\n',ADCLOPTS.AppName')
+fprintf('AdcL++ %s\n',ADCLOPTS.AppName')
 
 ADCLOPTS.HOME = HOME;
-%cd(SSVizOpts.HOME)
+%cd(ADCLOPTS.HOME)
 
 if ADCLOPTS.UseStrTree
     f=[ADCLOPTS.HOME '/extern/' jts];
@@ -106,18 +101,17 @@ end
 
 if isdeployed
     if ~exist(ADCLHOME, 'dir')
-        fprintf(sprintf('\nSSViz++ Creating ADCLHOME at %s.\n', ADCLHOME))
+        fprintf(sprintf('\nAdcL++ Creating ADCLHOME at %s.\n', ADCLHOME))
         mkdir(ADCLHOME)
     end
 end
 
 if ~exist(TempDataLocation,'dir')
-    fprintf(sprintf('\nSSViz++ Creating TempData at %s.\n', TempDataLocation))
+    fprintf(sprintf('\nAdcL++ Creating TempData at %s.\n', TempDataLocation))
     mkdir(TempDataLocation)
 end
 
 %%
-% get remote copy of InstanceDefaults.m
 if isunix
     mvcom='mv';
     cpcom='cp';
@@ -126,13 +120,12 @@ else
     cpcom='copy';
 end
 
-
 if ~isempty(ADCLOPTS.BoundingBox),ADCLOPTS.DefaultBoundingBox=ADCLOPTS.BoundingBox;end
 
 %SetVectorOptions('Stride',100,'ScaleFac',25,'Color','k')
-VectorOptions.Stride=100;
-VectorOptions.ScaleFac=25;
-VectorOptions.Color='k';
+%VectorOptions.Stride=100;
+%VectorOptions.ScaleFac=25;
+%VectorOptions.Color='k';
 
 %%% clean up after initialization
 clear jts

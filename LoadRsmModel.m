@@ -1,20 +1,20 @@
 function [Model,TheGrid]=LoadRsmModel(ADCLHOME,ModelDir,ModelFile,ModelURL,ModelName,GridName)
 
 global Debug
-if Debug,fprintf('SSViz++ Function = %s\n',ThisFunctionName);end
+if Debug,fprintf('AdcL++ Function = %s\n',ThisFunctionName);end
 
 MODELHOME=fullfile(ADCLHOME, ModelDir);
 MODELPATH=fullfile(ADCLHOME, ModelFile);
 
 if ~exist(MODELHOME,'dir')
-    fprintf('\nSSViz++ Downloading model.  This may take several minutes ... \n')
+    fprintf('\nAdcL++ Downloading model.  This may take several minutes ... \n')
     ModelTar=websave(MODELPATH, ModelURL)
-    fprintf('\nSSViz++ Model downloaded.\n')
-    fprintf('\nSSViz++ Expanding model data.\n')
+    fprintf('\nAdcL++ Model downloaded.\n')
+    fprintf('\nAdcL++ Expanding model data.\n')
     untar(ModelTar, ADCLHOME)
-    fprintf('\nSSViz++ Model data expanded.\n')
+    fprintf('\nAdcL++ Model data expanded.\n')
 else
-    fprintf('\nSSViz++ Model aldready exists.\n')
+    fprintf('\nAdcL++ Model aldready exists.\n')
 
 end
 

@@ -1,53 +1,31 @@
-function varargout=StormSurgeViz(varargin)
+function varargout=AdcircLite(varargin)
 %
-% StormSurgeViz - Visualization Application for Storm Surge Model Output
+% AdcircLite - Visualization Application for Adcirc Lite RSM
 % 
-% Call as: StormSurgeViz(P1,V1,P2,V2,...)
+% Call as: AdcircLite(P1,V1,P2,V2,...)
 %
 % Allowed Parameter/Value pairs (default value listed first):
 %
-% Instance          - String ASGS instance to use;
-%                       {'nodcorps','hfip','ncfs'} and others as needed.
-% Storm             - String storm name; default='most recent storm in catalog';
-% Advisory          - String advisory number; default='most recent storm in catalog';
-% Grid              - String model gridname; default=[]; 
 % Units             - String to set height units; {'Meters','Feet'}
 % FontOffset        - Integer to increase (+) or decrease (-) fontsize in the app;
 % LocalTimeOffset   - (0, i.e. UTC) Hour offset for displayed times ( < 0 for west of GMT).
 % BoundingBox       - [xmin xmax ymin ymax] vector for initial axes zoom
-% CatalogName       - Name of catalog file to search for
 % ColorMax          - Maximum scalar value for color scaling
 % ColorMin          - Minimum scalar value for color scaling
 % ColorMap          - Color map to use; {'noaa_cmap','jet','hsv',...}
 % DisableContouring - {false,true} logical disabling mex compiled code calls
 % GoogleMapsApiKey  - Api Key from Google for extended map accessing
-% PollingInterval   - (900) interval in seconds to poll for catalog updates.
-% ThreddsServer     - specify alternative THREDDS server
-% Mode              - Local | Url | Network
-% Help              - Opens a help window with parameter/value details.
-%                     Must be the first and only argument to StormSurgeViz.
-% SendDiagnosticsToCommandWindow - {false,true}
 %
-% These parameters can be set in the MyStormSurgeViz_Init.m file.  This
-% file can be put anywhere on the MATLAB path EXCEPT in the StormSurgeViz 
-% directory.  A convenient place is in the user "matlab" directory, which
-% is in <USERHOME>/matlab by default in Unix/OSX. Parameters passed in via  
-% the command line will override any settings in MyStormSurgeViz_Init.m, as
-% well as any loaded in from the remotely maintained InstanceDefaults.m.  
-%
-% Do not put StormSurgeViz parameters in startup.m since this 
-% is called first by MATLAB at startup.
-%
-% Only one instance of StormSurgeViz is allowed concurrently.  Close existing
+% Only one instance of AdcircLite is allowed concurrently.  Close existing
 % instances first.
 %
 % Example:
 %
-% >> StormSurgeViz;
+% >> AdcircLite;
 % or
-% >> close all; StormSurgeViz('Instance','rencidaily','Units','feet')
+% >> close all; AdcircLite('Units','feet',...)
 % or 
-% [Handles,Url,Connections,Options]=StormSurgeViz(P1,V1,P2,V2,...);
+% [Handles,Options]=AdcircLite(P1,V1,P2,V2,...);
 %
 % Copyright (c) 2014  Renaissance Computing Institute. All rights reserved.
 % Licensed under the RENCI Open Source Software License v. 1.0.
@@ -60,24 +38,24 @@ function varargout=StormSurgeViz(varargin)
 
 if nargin==1
     if strcmp(varargin{1},'help')
-        fprintf('Call as: close all; StormSurgeViz(''Instance'',''gomex'',''Units'',''feet'')\n')
+        fprintf('Call as: close all; AdcircLite(''Instance'',''gomex'',''Units'',''feet'')\n')
         return
     end
 end
 
-% check to see if another instance of StormSurgeViz is already running
-tags=findobj(0,'Tag','MainVizAppFigure');
+% check to see if another instance of AdcircLite is already running
+tags=findobj(0,'Tag','MainAdcLVizAppFigure');
 if ~isempty(tags)
     close(tags)
 
-%    str={'Only one instance of StormSurgeViz can run simultaneously.'
-%         'Press Continue to close other StormSurgeViz instances and start this one, or Cancel to abort the current instance.'};
-%    ButtonName=questdlg(str,'Other StormSurgeViz Instances Found!!!','Continue','Cancel','Cancel');
+%    str={'Only one instance of AdcircLite can run simultaneously.'
+%         'Press Continue to close other AdcircLite instances and start this one, or Cancel to abort the current instance.'};
+%    ButtonName=questdlg(str,'Other AdcircLite Instances Found!!!','Continue','Cancel','Cancel');
 %     switch ButtonName,
 %         case 'Continue'
 %             close(tags)
 %         otherwise
-%             fprintf('Aborting this instance of StormSurgeViz.\n')
+%             fprintf('Aborting this instance of AdcircLite.\n')
 %             return
 %     end
 end
@@ -103,10 +81,10 @@ end
 %     msgbox(str)
 % end
 %     
-%% Initialize StormSurgeViz
-fprintf('\nSSViz++ Initializing application.\n')
+%% Initialize AdcircLite
+fprintf('\nAdcL++ Initializing application.\n')
 global ADCLOPTS
-ADCLOPTS=StormSurgeViz_Init;
+ADCLOPTS=AdcircLite_Init;
 
 UrlBase='file://';
 Url.ThisInstance='Local';
@@ -126,7 +104,7 @@ Url.Units=ADCLOPTS.Units;
 %% load the RSM model
 global Model
 global TheGrids TheGrid
-fprintf('SSViz++ Loading RSM ... \n')
+fprintf('AdcL++ Loading RSM ... \n')
 [Model,TheGrid]=LoadRsmModel(ADCLOPTS.ADCLHOME,ADCLOPTS.ModelDir,ADCLOPTS.ModelFile,ADCLOPTS.ModelURL,ADCLOPTS.ModelName,ADCLOPTS.GridName);
 
 TheGrids{1}=TheGrid;
@@ -135,7 +113,7 @@ TheGrids{1}=TheGrid;
 %% InitializeUI
 Handles=InitializeUI(ADCLOPTS);
 
-setappdata(Handles.MainFigure,'SSVizOpts',ADCLOPTS);
+setappdata(Handles.MainFigure,'AdcLOpts',ADCLOPTS);
 setappdata(Handles.MainFigure,'Url',Url);
 setappdata(Handles.MainFigure,'DateStringFormatInput',ADCLOPTS.DateStringFormatInput);
 setappdata(Handles.MainFigure,'DateStringFormatOutput',ADCLOPTS.DateStringFormatOutput);
@@ -236,12 +214,12 @@ end
 %%% BrowseFileSystem
 function BrowseFileSystem(~,~)
     global Debug 
-    if Debug,fprintf('SSViz++ Function = %s\n',ThisFunctionName);end
+    if Debug,fprintf('AdcL++ Function = %s\n',ThisFunctionName);end
 
     if exist('hObj','var')
         FigThatCalledThisFxn=gcbf;
     else
-        FigThatCalledThisFxn=findobj(0,'Tag','MainVizAppFigure');
+        FigThatCalledThisFxn=findobj(0,'Tag','MainAdcLVizAppFigure');
     end
     Handles=get(FigThatCalledThisFxn,'UserData');
     Url=getappdata(FigThatCalledThisFxn,'Url');
@@ -263,7 +241,7 @@ end
 function DrawDepthContours(hObj,~)
     
     global TheGrids Debug
-   if Debug,fprintf('SSViz++ Function = %s\n',ThisFunctionName);end
+   if Debug,fprintf('AdcL++ Function = %s\n',ThisFunctionName);end
 
     TheGrid=TheGrids{1};
 
@@ -302,12 +280,12 @@ end
 function h=DrawTrack(track)
     
     global Debug
-    if Debug,fprintf('SSViz++ Function = %s\n',ThisFunctionName);end
+    if Debug,fprintf('AdcL++ Function = %s\n',ThisFunctionName);end
 
-    f=findobj(0,'Tag','MainVizAppFigure');
+    f=findobj(0,'Tag','MainAdcLVizAppFigure');
     Handles=get(f,'UserData');
-    SSVizOpts=getappdata(Handles.MainFigure,'SSVizOpts');              
-        LocalTimeOffset=SSVizOpts.LocalTimeOffset;
+    ADCLOPTS=getappdata(Handles.MainFigure,'AdcLOpts');              
+    LocalTimeOffset=ADCLOPTS.LocalTimeOffset;
     FontSizes=getappdata(Handles.MainFigure,'FontSizes');
 
     %fmtstr=' mmmdd@HH PM';
@@ -355,7 +333,7 @@ end
 function Handles=DrawVectors(Handles,Member,Field)
 
     global TheGrids Debug
-    if Debug,fprintf('SSViz++ Function = %s\n',ThisFunctionName);end 
+    if Debug,fprintf('AdcL++ Function = %s\n',ThisFunctionName);end 
     
     TheGrid=TheGrids{Member.GridId};
     
@@ -396,50 +374,50 @@ end
 %%  RedrawVectors
 %%% RedrawVectors
 %%% RedrawVectors
-function RedrawVectors(varargin)
-
-    global Connections Debug
-    if Debug,fprintf('SSViz++ Function = %s\n',ThisFunctionName);end
-   
-    FigHandle=gcbf;
-    Handles=get(FigHandle,'UserData');
-    
-    EnsembleClicked=get(get(Handles.EnsButtonHandlesGroup,'SelectedObject'),'string');
-    ScalarVariableClicked=get(get(Handles.ScalarVarButtonHandlesGroup,'SelectedObject'),'string');
-    VectorVariableClicked=get(get(Handles.VectorVarButtonHandlesGroup,'SelectedObject'),'string');
-
-    EnsembleNames=Connections.EnsembleNames; 
-    VariableNames=Connections.VariableNames; 
-    VariableTypes=Connections.VariableTypes; 
-    
-    EnsIndex=find(strcmp(EnsembleClicked,EnsembleNames)); 
-    ScalarVarIndex=find(strcmp(ScalarVariableClicked,VariableNames));
-    VectorVarIndex=find(strcmp(VectorVariableClicked,VariableNames));
-
-    % Delete the current vector set
-    if isfield(Handles,'Vectors')
-        if ishandle(Handles.Vectors)
-            % get data to redraw before deleting the vector object
-            Field=getappdata(Handles.Vectors(1),'Field');
-            delete(Handles.Vectors);
-        else
-            SetUIStatusMessage('No vectors to redraw.\n')
-            return
-        end
-    else
-        SetUIStatusMessage('No vectors to redraw.\n')
-        return
-    end
-    
-    Member=Connections.members{EnsIndex,VectorVarIndex}; %#ok<FNDSB>
-    
-    %if ~isfield(Handles,'Vectors'),return,end
-    %if ~ishandle(Handles.Vectors(1)),return,end
-    
-    Handles=DrawVectors(Handles,Member,Field);
-    set(Handles.MainFigure,'UserData',Handles);
-
-end
+% function RedrawVectors(varargin)
+% 
+%     global Connections Debug
+%     if Debug,fprintf('AdcL++ Function = %s\n',ThisFunctionName);end
+%    
+%     FigHandle=gcbf;
+%     Handles=get(FigHandle,'UserData');
+%     
+%     EnsembleClicked=get(get(Handles.EnsButtonHandlesGroup,'SelectedObject'),'string');
+%     ScalarVariableClicked=get(get(Handles.ScalarVarButtonHandlesGroup,'SelectedObject'),'string');
+%     VectorVariableClicked=get(get(Handles.VectorVarButtonHandlesGroup,'SelectedObject'),'string');
+% 
+%     EnsembleNames=Connections.EnsembleNames; 
+%     VariableNames=Connections.VariableNames; 
+%     VariableTypes=Connections.VariableTypes; 
+%     
+%     EnsIndex=find(strcmp(EnsembleClicked,EnsembleNames)); 
+%     ScalarVarIndex=find(strcmp(ScalarVariableClicked,VariableNames));
+%     VectorVarIndex=find(strcmp(VectorVariableClicked,VariableNames));
+% 
+%     % Delete the current vector set
+%     if isfield(Handles,'Vectors')
+%         if ishandle(Handles.Vectors)
+%             % get data to redraw before deleting the vector object
+%             Field=getappdata(Handles.Vectors(1),'Field');
+%             delete(Handles.Vectors);
+%         else
+%             SetUIStatusMessage('No vectors to redraw.\n')
+%             return
+%         end
+%     else
+%         SetUIStatusMessage('No vectors to redraw.\n')
+%         return
+%     end
+%     
+%     Member=Connections.members{EnsIndex,VectorVarIndex}; %#ok<FNDSB>
+%     
+%     %if ~isfield(Handles,'Vectors'),return,end
+%     %if ~ishandle(Handles.Vectors(1)),return,end
+%     
+%     Handles=DrawVectors(Handles,Member,Field);
+%     set(Handles.MainFigure,'UserData',Handles);
+% 
+% end
 
 %%  DeleteVectors
 %%% DeleteVectors
@@ -511,384 +489,383 @@ end
 %%  SetEnsembleControls
 %%% SetEnsembleControls
 %%% SetEnsembleControls
-function Handles=SetEnsembleControls(varargin)
-
-    global Connections Debug
-    if Debug,fprintf('SSViz++ Function = %s\n',ThisFunctionName);end
-
-    SetUIStatusMessage('Setting up Ensemble controls ...\n')
-
-    FigHandle=varargin{1};     
-    Handles=get(FigHandle,'UserData');  
-    FontSizes=getappdata(Handles.MainFigure,'FontSizes');
-    panelColor = get(0,'DefaultUicontrolBackgroundColor');
-
-    % delete previously instanced controls, if they exist
-    if isfield(Handles,'EnsButtonHandlesGroup')
-        if ishandle(Handles.EnsButtonHandles)
-            delete(Handles.EnsButtonHandles);      
-        end
-        Handles=rmfield(Handles,'EnsButtonHandles');
-        
-        if ishandle(Handles.EnsButtonHandlesGroup)
-            delete(Handles.EnsButtonHandlesGroup);      
-        end
-        Handles=rmfield(Handles,'EnsButtonHandlesGroup');
-    end
-    
-    EnsembleNames=Connections.EnsembleNames;
-    
-    % build out ensemble member controls
-    NEns=length(EnsembleNames);
-    dy=.45;
-    
-    Handles.EnsButtonHandlesGroup = uibuttongroup(...
-        'Parent',Handles.CenterContainerUpper,...
-        'Title','Ensemble Members',...
-        'FontSize',FontSizes(2),...
-        'BackGroundColor',panelColor,...
-        'Position',[.01 .975-dy .48 dy],...
-        'Tag','EnsembleMemberRadioButtonGroup',...
-        'SelectionChangeFcn',@SetNewField);
-    dy=1/10;
-    for i=1:NEns
-        Handles.EnsButtonHandles(i)=uicontrol(...
-            Handles.EnsButtonHandlesGroup,...
-            'Style','Radiobutton',...
-            'String',EnsembleNames{i},...
-            'Units','normalized',...
-            'FontSize',FontSizes(2),...
-            'Position', [.1 .975-dy*i .9 dy],...
-            'Tag','EnsembleMemberRadioButton');
-  
-            set(Handles.EnsButtonHandles(i),'Enable','on');
-    end
-    set(Handles.MainFigure,'UserData',Handles);
-    SetUIStatusMessage('* Done.\n\n')
-
-end
+% function Handles=SetEnsembleControls(varargin)
+% 
+%     global Connections Debug
+%     if Debug,fprintf('AdcL++ Function = %s\n',ThisFunctionName);end
+% 
+%     SetUIStatusMessage('Setting up Ensemble controls ...\n')
+% 
+%     FigHandle=varargin{1};     
+%     Handles=get(FigHandle,'UserData');  
+%     FontSizes=getappdata(Handles.MainFigure,'FontSizes');
+%     panelColor = get(0,'DefaultUicontrolBackgroundColor');
+% 
+%     % delete previously instanced controls, if they exist
+%     if isfield(Handles,'EnsButtonHandlesGroup')
+%         if ishandle(Handles.EnsButtonHandles)
+%             delete(Handles.EnsButtonHandles);      
+%         end
+%         Handles=rmfield(Handles,'EnsButtonHandles');
+%         
+%         if ishandle(Handles.EnsButtonHandlesGroup)
+%             delete(Handles.EnsButtonHandlesGroup);      
+%         end
+%         Handles=rmfield(Handles,'EnsButtonHandlesGroup');
+%     end
+%     
+%     EnsembleNames=Connections.EnsembleNames;
+%     
+%     % build out ensemble member controls
+%     NEns=length(EnsembleNames);
+%     dy=.45;
+%     
+%     Handles.EnsButtonHandlesGroup = uibuttongroup(...
+%         'Parent',Handles.CenterContainerUpper,...
+%         'Title','Ensemble Members',...
+%         'FontSize',FontSizes(2),...
+%         'BackGroundColor',panelColor,...
+%         'Position',[.01 .975-dy .48 dy],...
+%         'Tag','EnsembleMemberRadioButtonGroup',...
+%         'SelectionChangeFcn',@SetNewField);
+%     dy=1/10;
+%     for i=1:NEns
+%         Handles.EnsButtonHandles(i)=uicontrol(...
+%             Handles.EnsButtonHandlesGroup,...
+%             'Style','Radiobutton',...
+%             'String',EnsembleNames{i},...
+%             'Units','normalized',...
+%             'FontSize',FontSizes(2),...
+%             'Position', [.1 .975-dy*i .9 dy],...
+%             'Tag','EnsembleMemberRadioButton');
+%   
+%             set(Handles.EnsButtonHandles(i),'Enable','on');
+%     end
+%     set(Handles.MainFigure,'UserData',Handles);
+%     SetUIStatusMessage('* Done.\n\n')
+% 
+% end
 
 %%  SetVariableControls
 %%% SetVariableControls
 %%% SetVariableControls
-function Handles=SetVariableControls(varargin)
-    
-
-    global Connections Debug Vecs SSVizOpts
-    if Debug,fprintf('SSViz++ Function = %s\n',ThisFunctionName);end
-
-    SetUIStatusMessage('Setting up Variable controls ...\n')
-
-    FigHandle=varargin{1};     
-    AxesHandle=varargin{2};  
-    Handles=get(FigHandle,'UserData');
-    FontSizes=getappdata(Handles.MainFigure,'FontSizes');
-    panelColor = get(0,'DefaultUicontrolBackgroundColor');
-    KeepInSync=SSVizOpts.KeepScalarsAndVectorsInSync;
-
-    VariableNames=Connections.VariableNames; 
-    VariableTypes=Connections.VariableTypes; 
-
-    % delete previously instanced controls, if they exist
-    if isfield(Handles,'ScalarVarButtonHandlesGroup')
-        delete(Handles.ScalarVarButtonHandles);        
-        Handles=rmfield(Handles,'ScalarVarButtonHandles');
-        delete(Handles.ScalarVarButtonHandlesGroup);
-        Handles=rmfield(Handles,'ScalarVarButtonHandlesGroup');
-    end
-    if isfield(Handles,'VectorVarButtonHandlesGroup')
-        delete(Handles.VectorVarButtonHandles);        
-        Handles=rmfield(Handles,'VectorVarButtonHandles');
-        delete(Handles.VectorVarButtonHandlesGroup);
-        Handles=rmfield(Handles,'VectorVarButtonHandlesGroup');
-    end
-    
-    Scalars= find(strcmp(VariableTypes,'Scalar'));
-    Vectors= find(strcmp(VariableTypes,'Vector'));
-
-    % build out variable member controls, scalars first
-    NVar=length(Scalars);
-
-    dy1=.45;
-    Handles.ScalarVarButtonHandlesGroup = uibuttongroup(...
-        'Parent',Handles.CenterContainerUpper,...
-        'Title','Scalar Variables ',...
-        'FontSize',FontSizes(2),...
-        'BackGroundColor',panelColor,...
-        'Position',[.51 .975-dy1 .48 dy1],...
-        'Tag','ScalarVariableMemberRadioButtonGroup',...
-        'SelectionChangeFcn',@SetNewField);
-    
-    dy2=1/11;
-    for i=1:NVar
-        Handles.ScalarVarButtonHandles(i)=uicontrol(...
-            Handles.ScalarVarButtonHandlesGroup,...
-            'Style','Radiobutton',...
-            'String',VariableNames{Scalars(i)},...
-            'Units','normalized',...
-            'FontSize',FontSizes(2),...
-            'Position', [.1 .975-dy2*i .9 dy2],...
-            'Tag','ScalarVariableMemberRadioButton');
-  
-            set(Handles.ScalarVarButtonHandles(i),'Enable','on');
-    end
-    
-    for i=1:length(Handles.ScalarVarButtonHandles)
-        if isempty(Connections.members{1,Scalars(i)}.NcTBHandle)
-            set(Handles.ScalarVarButtonHandles(i),'Value',0)
-            %set(Handles.ScalarVarButtonHandles(i),'Value','off')
-        end
-    end
-    for i=1:length(Handles.ScalarVarButtonHandles)
-        if ~isempty(Connections.members{1,Scalars(i)}.NcTBHandle)
-            set(Handles.ScalarVarButtonHandles(i),'Value',1)
-            break
-        end
-    end
-        
-    % build out variable member controls, Vectors 
-    NVar=length(Vectors);
-
-    Handles.VectorVarButtonHandlesGroup = uibuttongroup(...
-        'Parent',Handles.CenterContainerUpper,...
-        'Title','Vector Variables',...
-        'FontSize',FontSizes(2),...
-        'BackGroundColor',panelColor,...
-        'Position',[.51 .025 .48 dy1],...
-        'Tag','VectorVariableMemberRadioButtonGroup',...
-        'SelectionChangeFcn',@SetNewField);
-    
-    for i=1:NVar
-        Handles.VectorVarButtonHandles(i)=uicontrol(...
-            Handles.VectorVarButtonHandlesGroup,...
-            'Style','Radiobutton',...
-            'String',VariableNames{Vectors(i)},...
-            'Units','normalized',...
-            'FontSize',FontSizes(2),...
-            'Position', [.1 .975-dy2*i .9 dy2],...
-            'Tag','VectorsVariableMemberRadioButton');
-  
-            set(Handles.VectorVarButtonHandles(i),'Enable',Vecs);
-    end
-    
-    for i=1:length(Handles.VectorVarButtonHandles)
-        if isempty(Connections.members{1,Vectors(i)}.NcTBHandle)
-            set(Handles.VectorVarButtonHandles(i),'Value',0)
-            set(Handles.VectorVarButtonHandles(i),'Enable','off')
-        end
-    end
-    for i=1:length(Handles.VectorVarButtonHandles)
-        if ~isempty(Connections.members{1,Vectors(i)}.NcTBHandle)
-            %set(Handles.VectorVarButtonHandles(i),'Value',1)
-            break
-        end
-    end
-   
-    Handles.VectorKeepInSyncButton=uicontrol(...
-        'Parent',Handles.VectorVarButtonHandlesGroup,...
-        'Style','checkbox',...
-        'Units','normalized',...
-        'Position',[.1 .24 .8 .1],...
-        'Tag','OverlayVectorsButton',...
-        'FontSize',FontSizes(2),...
-        'String','Keep in Sync',...
-        'Enable','off',...
-        'Callback', @ToggleSync,...
-        'Value',KeepInSync);
-    
-    Handles.VectorOptionsOverlayButton=uicontrol(...
-        'Parent',Handles.VectorVarButtonHandlesGroup,...
-        'Style','checkbox',...
-        'Units','normalized',...
-        'Position',[.1 .12 .8 .1],...
-        'Tag','OverlayVectorsButton',...
-        'FontSize',FontSizes(2),...
-        'String','Overlay Vectors',...
-        'Enable',Vecs,...
-        'CallBack','',...
-        'Value',1);
-    
-
-    Handles.VectorAsScalarButton=uicontrol(...
-        'Parent',Handles.VectorVarButtonHandlesGroup,...
-        'Style','checkbox',...
-        'Units','normalized',...
-        'Position',[.1 .02 .8 .1],...
-        'Tag','VectorAsScalarButton',...
-        'FontSize',FontSizes(2),...
-        'String','Display as Speed',...
-        'Enable',Vecs,...
-        'CallBack','');
-    
-    set(Handles.MainFigure,'UserData',Handles);
-    SetUIStatusMessage('* Done.\n\n')
-
-end
+% function Handles=SetVariableControls(varargin)
+%     
+%     global Connections Debug Vecs ADCLOPTS
+%     if Debug,fprintf('AdcL++ Function = %s\n',ThisFunctionName);end
+% 
+%     SetUIStatusMessage('Setting up Variable controls ...\n')
+% 
+%     FigHandle=varargin{1};     
+%     AxesHandle=varargin{2};  
+%     Handles=get(FigHandle,'UserData');
+%     FontSizes=getappdata(Handles.MainFigure,'FontSizes');
+%     panelColor = get(0,'DefaultUicontrolBackgroundColor');
+%     KeepInSync=ADCLOPTS.KeepScalarsAndVectorsInSync;
+% 
+%     VariableNames=Connections.VariableNames; 
+%     VariableTypes=Connections.VariableTypes; 
+% 
+%     % delete previously instanced controls, if they exist
+%     if isfield(Handles,'ScalarVarButtonHandlesGroup')
+%         delete(Handles.ScalarVarButtonHandles);        
+%         Handles=rmfield(Handles,'ScalarVarButtonHandles');
+%         delete(Handles.ScalarVarButtonHandlesGroup);
+%         Handles=rmfield(Handles,'ScalarVarButtonHandlesGroup');
+%     end
+%     if isfield(Handles,'VectorVarButtonHandlesGroup')
+%         delete(Handles.VectorVarButtonHandles);        
+%         Handles=rmfield(Handles,'VectorVarButtonHandles');
+%         delete(Handles.VectorVarButtonHandlesGroup);
+%         Handles=rmfield(Handles,'VectorVarButtonHandlesGroup');
+%     end
+%     
+%     Scalars= find(strcmp(VariableTypes,'Scalar'));
+%     Vectors= find(strcmp(VariableTypes,'Vector'));
+% 
+%     % build out variable member controls, scalars first
+%     NVar=length(Scalars);
+% 
+%     dy1=.45;
+%     Handles.ScalarVarButtonHandlesGroup = uibuttongroup(...
+%         'Parent',Handles.CenterContainerUpper,...
+%         'Title','Scalar Variables ',...
+%         'FontSize',FontSizes(2),...
+%         'BackGroundColor',panelColor,...
+%         'Position',[.51 .975-dy1 .48 dy1],...
+%         'Tag','ScalarVariableMemberRadioButtonGroup',...
+%         'SelectionChangeFcn',@SetNewField);
+%     
+%     dy2=1/11;
+%     for i=1:NVar
+%         Handles.ScalarVarButtonHandles(i)=uicontrol(...
+%             Handles.ScalarVarButtonHandlesGroup,...
+%             'Style','Radiobutton',...
+%             'String',VariableNames{Scalars(i)},...
+%             'Units','normalized',...
+%             'FontSize',FontSizes(2),...
+%             'Position', [.1 .975-dy2*i .9 dy2],...
+%             'Tag','ScalarVariableMemberRadioButton');
+%   
+%             set(Handles.ScalarVarButtonHandles(i),'Enable','on');
+%     end
+%     
+%     for i=1:length(Handles.ScalarVarButtonHandles)
+%         if isempty(Connections.members{1,Scalars(i)}.NcTBHandle)
+%             set(Handles.ScalarVarButtonHandles(i),'Value',0)
+%             %set(Handles.ScalarVarButtonHandles(i),'Value','off')
+%         end
+%     end
+%     for i=1:length(Handles.ScalarVarButtonHandles)
+%         if ~isempty(Connections.members{1,Scalars(i)}.NcTBHandle)
+%             set(Handles.ScalarVarButtonHandles(i),'Value',1)
+%             break
+%         end
+%     end
+%         
+%     % build out variable member controls, Vectors 
+%     NVar=length(Vectors);
+% 
+%     Handles.VectorVarButtonHandlesGroup = uibuttongroup(...
+%         'Parent',Handles.CenterContainerUpper,...
+%         'Title','Vector Variables',...
+%         'FontSize',FontSizes(2),...
+%         'BackGroundColor',panelColor,...
+%         'Position',[.51 .025 .48 dy1],...
+%         'Tag','VectorVariableMemberRadioButtonGroup',...
+%         'SelectionChangeFcn',@SetNewField);
+%     
+%     for i=1:NVar
+%         Handles.VectorVarButtonHandles(i)=uicontrol(...
+%             Handles.VectorVarButtonHandlesGroup,...
+%             'Style','Radiobutton',...
+%             'String',VariableNames{Vectors(i)},...
+%             'Units','normalized',...
+%             'FontSize',FontSizes(2),...
+%             'Position', [.1 .975-dy2*i .9 dy2],...
+%             'Tag','VectorsVariableMemberRadioButton');
+%   
+%             set(Handles.VectorVarButtonHandles(i),'Enable',Vecs);
+%     end
+%     
+%     for i=1:length(Handles.VectorVarButtonHandles)
+%         if isempty(Connections.members{1,Vectors(i)}.NcTBHandle)
+%             set(Handles.VectorVarButtonHandles(i),'Value',0)
+%             set(Handles.VectorVarButtonHandles(i),'Enable','off')
+%         end
+%     end
+%     for i=1:length(Handles.VectorVarButtonHandles)
+%         if ~isempty(Connections.members{1,Vectors(i)}.NcTBHandle)
+%             %set(Handles.VectorVarButtonHandles(i),'Value',1)
+%             break
+%         end
+%     end
+%    
+%     Handles.VectorKeepInSyncButton=uicontrol(...
+%         'Parent',Handles.VectorVarButtonHandlesGroup,...
+%         'Style','checkbox',...
+%         'Units','normalized',...
+%         'Position',[.1 .24 .8 .1],...
+%         'Tag','OverlayVectorsButton',...
+%         'FontSize',FontSizes(2),...
+%         'String','Keep in Sync',...
+%         'Enable','off',...
+%         'Callback', @ToggleSync,...
+%         'Value',KeepInSync);
+%     
+%     Handles.VectorOptionsOverlayButton=uicontrol(...
+%         'Parent',Handles.VectorVarButtonHandlesGroup,...
+%         'Style','checkbox',...
+%         'Units','normalized',...
+%         'Position',[.1 .12 .8 .1],...
+%         'Tag','OverlayVectorsButton',...
+%         'FontSize',FontSizes(2),...
+%         'String','Overlay Vectors',...
+%         'Enable',Vecs,...
+%         'CallBack','',...
+%         'Value',1);
+%     
+% 
+%     Handles.VectorAsScalarButton=uicontrol(...
+%         'Parent',Handles.VectorVarButtonHandlesGroup,...
+%         'Style','checkbox',...
+%         'Units','normalized',...
+%         'Position',[.1 .02 .8 .1],...
+%         'Tag','VectorAsScalarButton',...
+%         'FontSize',FontSizes(2),...
+%         'String','Display as Speed',...
+%         'Enable',Vecs,...
+%         'CallBack','');
+%     
+%     set(Handles.MainFigure,'UserData',Handles);
+%     SetUIStatusMessage('* Done.\n\n')
+% 
+% end
 
 %%  SetSnapshotControls
 %%% SetSnapshotControls
 %%% SetSnapshotControls
-function Handles=SetSnapshotControls(varargin)
-
-    global Connections Debug
-    if Debug,fprintf('SSViz++ Function = %s\n',ThisFunctionName);end
-
-    SetUIStatusMessage('Setting up Snapshot Controls ... \n')
-
-    FigHandle=varargin{1};     
-    AxesHandle=varargin{2};  
-    Handles=get(FigHandle,'UserData');
-    SSVizOpts=getappdata(FigHandle,'SSVizOpts');
-    LocalTimeOffset=SSVizOpts.LocalTimeOffset;
-
-    FontSizes=getappdata(Handles.MainFigure,'FontSizes');
-        
-    panelColor = get(0,'DefaultUicontrolBackgroundColor');
-    DateStringFormatInput=getappdata(Handles.MainFigure,'DateStringFormatInput');
-    DateStringFormatOutput=getappdata(Handles.MainFigure,'DateStringFormatOutput');
-
-    ThreeDVars={'Water Level', 'Wind Velocity'};
-    
-    EnsembleClicked=get(get(Handles.EnsButtonHandlesGroup,'SelectedObject'),'string');
-    VariableClicked=get(get(Handles.ScalarVarButtonHandlesGroup,'SelectedObject'),'string');
-    EnsembleNames=Connections.EnsembleNames; 
-    VariableNames=Connections.VariableNames; 
-    EnsIndex=find(strcmp(EnsembleClicked,EnsembleNames)); 
-    VarIndex=find(strcmp(VariableClicked,VariableNames));
-   
-    [a,b]=ismember(ThreeDVars,VariableNames);
-    ThreeDvarsattached=false;
-    for i=1:length(b)
-        if ~isempty(Connections.members{EnsIndex,b(i)}.NcTBHandle)
-            ThreeDvarsattached=true;
-        end
-    end
- 
-    % delete previously instanced controls, if they exist
-    if isfield(Handles,'ScalarSnapshotButtonHandlePanel')
-        if ishandle(Handles.ScalarSnapshotButtonHandlePanel)
-            delete(Handles.ScalarSnapshotButtonHandlePanel);
-        end
-        Handles=rmfield(Handles,'ScalarSnapshotButtonHandle');
-        Handles=rmfield(Handles,'ScalarSnapshotButtonHandlePanel');
-        Handles=rmfield(Handles,'ScalarSnapshotSliderHandle');
-    end
-    
-    if ~any(a) || ~ThreeDvarsattached
-        
-        set(Handles.HydrographButton,'enable','off')
-        %disp('disable Find Hydrographbutton')
-        snapshotlist={'Not Available'};
-        m=2;
-        
-    else
-               
-        % base the times on the variables selected in the UI. 
-        
-        time=Connections.members{EnsIndex,b(1)}.NcTBHandle.geovariable('time');
-        basedate=time.attribute('base_date');
-        if isempty(basedate)
-            s=time.attribute('units');
-            p=strspl(s);
-            basedate=datestr(datenum([p{3} ' ' p{4}],DateStringFormatInput));
-        end
-        timebase_datenum=datenum(basedate,DateStringFormatInput);
-        t=cast(time.data(:),'double');
-        snapshotlist=cell(length(t),1);
-        time_datenum=time.data(:)/86400+timebase_datenum;
-        for i=1:length(t)
-            snapshotlist{i}=datestr(t(i)/86400+timebase_datenum+LocalTimeOffset/24,DateStringFormatOutput);
-        end
-        [m,~]=size(snapshotlist);
-        
-        % build out snapshot list controls
-        
-        Handles.ScalarSnapshotButtonHandlePanel = uipanel(...
-            'Parent',Handles.CenterContainerUpper,...
-            'Title','Scalar Snapshot List ',...
-            'BorderType','etchedin',...
-            'FontSize',FontSizes(2),...
-            'BackGroundColor',panelColor,...
-            'Position',[.01 0.2 .49 .15],...
-            'Tag','ScalarSnapshotButtonGroup');
-              
-        Handles.VectorSnapshotButtonHandlePanel = uipanel(...
-            'Parent',Handles.CenterContainerUpper,...
-            'Title','Vector Snapshot List ',...
-            'BorderType','etchedin',...
-            'FontSize',FontSizes(2),...
-            'BackGroundColor',panelColor,...
-            'Position',[.01 0.02 .49 .15],...
-            'Tag','VectorSnapshotButtonGroup');
-        
-        
-        if m>0
-            Handles.ScalarSnapshotButtonHandle=uicontrol(...
-                Handles.ScalarSnapshotButtonHandlePanel,...
-                'Style','popupmenu',...
-                'String',snapshotlist,...
-                'Units','normalized',...
-                'FontSize',FontSizes(3),...
-                'Position', [.05 .75 .9 .1],...
-                'Tag','ScalarSnapshotButton',...
-                'Callback',@ViewSnapshot);
-            
-            Handles.ScalarSnapshotSliderHandle=uicontrol(...
-                Handles.ScalarSnapshotButtonHandlePanel,...
-                'Style','slider',...
-                'Units','normalized',...
-                'FontSize',FontSizes(1),...
-                'Position', [.05 0.25 .9 .1],...
-                'value',1,'Min',1,...
-                'Max',m,...
-                'SliderStep',[1/(m-1) 1/(m-1)],...
-                'Tag','ScalarSnapshotSlider',...
-                'UserData',time_datenum,...
-                'Callback',@ViewSnapshot);
-            
-            Handles.VectorSnapshotButtonHandle=uicontrol(...
-                Handles.VectorSnapshotButtonHandlePanel,...
-                'Style','popupmenu',...
-                'String',snapshotlist,...
-                'Units','normalized',...
-                'FontSize',FontSizes(3),...
-                'Position', [.05 .75 .9 .1],...
-                'Tag','VectorSnapshotButton',...
-                'Callback',@ViewSnapshot);
-            
-            Handles.VectorSnapshotSliderHandle=uicontrol(...
-                Handles.VectorSnapshotButtonHandlePanel,...
-                'Style','slider',...
-                'Units','normalized',...
-                'FontSize',FontSizes(1),...
-                'Position', [.05 0.25 .9 .1],...
-                'value',1,'Min',1,...
-                'Max',m,...
-                'SliderStep',[1/(m-1) 1/(m-1)],...
-                'Tag','VectorSnapshotSlider',...
-                'UserData',time_datenum,...
-                'Callback',@ViewSnapshot); 
-            
-        end
-        
-%        if ~ThreeDvarsattached
-            set(Handles.ScalarSnapshotButtonHandle,'Enable','off');
-            set(Handles.ScalarSnapshotSliderHandle,'Enable','off');
-            set(Handles.VectorSnapshotButtonHandle,'Enable','off');
-            set(Handles.VectorSnapshotSliderHandle,'Enable','off');
-%        else
-%            set(Handles.ScalarSnapshotButtonHandle,'Enable','on');
-%            set(Handles.ScalarSnapshotSliderHandle,'Enable','on');
-%            set(Handles.VectorSnapshotButtonHandle,'Enable','on');
-%            set(Handles.VectorSnapshotSliderHandle,'Enable','on');
-%        end     
-        
-    end
-    
-    set(Handles.MainFigure,'UserData',Handles);
-    SetUIStatusMessage('* Done.\n\n')
-
-end
+% function Handles=SetSnapshotControls(varargin)
+% 
+%     global Connections Debug
+%     if Debug,fprintf('AdcL++ Function = %s\n',ThisFunctionName);end
+% 
+%     SetUIStatusMessage('Setting up Snapshot Controls ... \n')
+% 
+%     FigHandle=varargin{1};     
+%     AxesHandle=varargin{2};  
+%     Handles=get(FigHandle,'UserData');
+%     ADCLOPTS=getappdata(FigHandle,'AdcLOpts');
+%     LocalTimeOffset=ADCLOPTS.LocalTimeOffset;
+% 
+%     FontSizes=getappdata(Handles.MainFigure,'FontSizes');
+%         
+%     panelColor = get(0,'DefaultUicontrolBackgroundColor');
+%     DateStringFormatInput=getappdata(Handles.MainFigure,'DateStringFormatInput');
+%     DateStringFormatOutput=getappdata(Handles.MainFigure,'DateStringFormatOutput');
+% 
+%     ThreeDVars={'Water Level', 'Wind Velocity'};
+%     
+%     EnsembleClicked=get(get(Handles.EnsButtonHandlesGroup,'SelectedObject'),'string');
+%     VariableClicked=get(get(Handles.ScalarVarButtonHandlesGroup,'SelectedObject'),'string');
+%     EnsembleNames=Connections.EnsembleNames; 
+%     VariableNames=Connections.VariableNames; 
+%     EnsIndex=find(strcmp(EnsembleClicked,EnsembleNames)); 
+%     VarIndex=find(strcmp(VariableClicked,VariableNames));
+%    
+%     [a,b]=ismember(ThreeDVars,VariableNames);
+%     ThreeDvarsattached=false;
+%     for i=1:length(b)
+%         if ~isempty(Connections.members{EnsIndex,b(i)}.NcTBHandle)
+%             ThreeDvarsattached=true;
+%         end
+%     end
+%  
+%     % delete previously instanced controls, if they exist
+%     if isfield(Handles,'ScalarSnapshotButtonHandlePanel')
+%         if ishandle(Handles.ScalarSnapshotButtonHandlePanel)
+%             delete(Handles.ScalarSnapshotButtonHandlePanel);
+%         end
+%         Handles=rmfield(Handles,'ScalarSnapshotButtonHandle');
+%         Handles=rmfield(Handles,'ScalarSnapshotButtonHandlePanel');
+%         Handles=rmfield(Handles,'ScalarSnapshotSliderHandle');
+%     end
+%     
+%     if ~any(a) || ~ThreeDvarsattached
+%         
+%         set(Handles.HydrographButton,'enable','off')
+%         %disp('disable Find Hydrographbutton')
+%         snapshotlist={'Not Available'};
+%         m=2;
+%         
+%     else
+%                
+%         % base the times on the variables selected in the UI. 
+%         
+%         time=Connections.members{EnsIndex,b(1)}.NcTBHandle.geovariable('time');
+%         basedate=time.attribute('base_date');
+%         if isempty(basedate)
+%             s=time.attribute('units');
+%             p=strspl(s);
+%             basedate=datestr(datenum([p{3} ' ' p{4}],DateStringFormatInput));
+%         end
+%         timebase_datenum=datenum(basedate,DateStringFormatInput);
+%         t=cast(time.data(:),'double');
+%         snapshotlist=cell(length(t),1);
+%         time_datenum=time.data(:)/86400+timebase_datenum;
+%         for i=1:length(t)
+%             snapshotlist{i}=datestr(t(i)/86400+timebase_datenum+LocalTimeOffset/24,DateStringFormatOutput);
+%         end
+%         [m,~]=size(snapshotlist);
+%         
+%         % build out snapshot list controls
+%         
+%         Handles.ScalarSnapshotButtonHandlePanel = uipanel(...
+%             'Parent',Handles.CenterContainerUpper,...
+%             'Title','Scalar Snapshot List ',...
+%             'BorderType','etchedin',...
+%             'FontSize',FontSizes(2),...
+%             'BackGroundColor',panelColor,...
+%             'Position',[.01 0.2 .49 .15],...
+%             'Tag','ScalarSnapshotButtonGroup');
+%               
+%         Handles.VectorSnapshotButtonHandlePanel = uipanel(...
+%             'Parent',Handles.CenterContainerUpper,...
+%             'Title','Vector Snapshot List ',...
+%             'BorderType','etchedin',...
+%             'FontSize',FontSizes(2),...
+%             'BackGroundColor',panelColor,...
+%             'Position',[.01 0.02 .49 .15],...
+%             'Tag','VectorSnapshotButtonGroup');
+%         
+%         
+%         if m>0
+%             Handles.ScalarSnapshotButtonHandle=uicontrol(...
+%                 Handles.ScalarSnapshotButtonHandlePanel,...
+%                 'Style','popupmenu',...
+%                 'String',snapshotlist,...
+%                 'Units','normalized',...
+%                 'FontSize',FontSizes(3),...
+%                 'Position', [.05 .75 .9 .1],...
+%                 'Tag','ScalarSnapshotButton',...
+%                 'Callback',@ViewSnapshot);
+%             
+%             Handles.ScalarSnapshotSliderHandle=uicontrol(...
+%                 Handles.ScalarSnapshotButtonHandlePanel,...
+%                 'Style','slider',...
+%                 'Units','normalized',...
+%                 'FontSize',FontSizes(1),...
+%                 'Position', [.05 0.25 .9 .1],...
+%                 'value',1,'Min',1,...
+%                 'Max',m,...
+%                 'SliderStep',[1/(m-1) 1/(m-1)],...
+%                 'Tag','ScalarSnapshotSlider',...
+%                 'UserData',time_datenum,...
+%                 'Callback',@ViewSnapshot);
+%             
+%             Handles.VectorSnapshotButtonHandle=uicontrol(...
+%                 Handles.VectorSnapshotButtonHandlePanel,...
+%                 'Style','popupmenu',...
+%                 'String',snapshotlist,...
+%                 'Units','normalized',...
+%                 'FontSize',FontSizes(3),...
+%                 'Position', [.05 .75 .9 .1],...
+%                 'Tag','VectorSnapshotButton',...
+%                 'Callback',@ViewSnapshot);
+%             
+%             Handles.VectorSnapshotSliderHandle=uicontrol(...
+%                 Handles.VectorSnapshotButtonHandlePanel,...
+%                 'Style','slider',...
+%                 'Units','normalized',...
+%                 'FontSize',FontSizes(1),...
+%                 'Position', [.05 0.25 .9 .1],...
+%                 'value',1,'Min',1,...
+%                 'Max',m,...
+%                 'SliderStep',[1/(m-1) 1/(m-1)],...
+%                 'Tag','VectorSnapshotSlider',...
+%                 'UserData',time_datenum,...
+%                 'Callback',@ViewSnapshot); 
+%             
+%         end
+%         
+% %        if ~ThreeDvarsattached
+%             set(Handles.ScalarSnapshotButtonHandle,'Enable','off');
+%             set(Handles.ScalarSnapshotSliderHandle,'Enable','off');
+%             set(Handles.VectorSnapshotButtonHandle,'Enable','off');
+%             set(Handles.VectorSnapshotSliderHandle,'Enable','off');
+% %        else
+% %            set(Handles.ScalarSnapshotButtonHandle,'Enable','on');
+% %            set(Handles.ScalarSnapshotSliderHandle,'Enable','on');
+% %            set(Handles.VectorSnapshotButtonHandle,'Enable','on');
+% %            set(Handles.VectorSnapshotSliderHandle,'Enable','on');
+% %        end     
+%         
+%     end
+%     
+%     set(Handles.MainFigure,'UserData',Handles);
+%     SetUIStatusMessage('* Done.\n\n')
+% 
+% end
     
 
 %%  RendererKludge
@@ -916,9 +893,10 @@ end
 %%% ExportShapeFile
 function ExportShapeFile(~,~)  
 
-    global TheGrids Connections Debug 
+%    global TheGrids Connections Debug 
+    global TheGrids Debug 
 
-    if Debug,fprintf('SSViz++ Function = %s\n',ThisFunctionName);end
+    if Debug,fprintf('AdcL++ Function = %s\n',ThisFunctionName);end
     
     FigHandle=gcbf;
     Handles=get(FigHandle,'UserData');
@@ -977,7 +955,7 @@ end
 %%% GraphicOutputPrint
 function GraphicOutputPrint(~,~) 
 
-    global Connections
+%    global Connections
 
     %prepare for a new figure
     FigHandle=gcbf;
@@ -1123,15 +1101,15 @@ end
 %%% ResetAxes
 function ResetAxes(~,~)
     global Debug
-    if Debug,fprintf('SSViz++ Function = %s\n',ThisFunctionName);end
+    if Debug,fprintf('AdcL++ Function = %s\n',ThisFunctionName);end
 
     FigThatCalledThisFxn=gcbf;
     Handles=get(FigThatCalledThisFxn,'UserData');
-    SSVizOpts=getappdata(FigThatCalledThisFxn,'SSVizOpts');
+    ADCLOPTS=getappdata(FigThatCalledThisFxn,'AdcLOpts');
 
     axes(Handles.MainAxes);
     
-    axx=SSVizOpts.DefaultBoundingBox;
+    axx=ADCLOPTS.DefaultBoundingBox;
     
     axis(axx)
     set(Handles.AxisLimits,'String',sprintf('%.2f  ',axx));
@@ -1145,7 +1123,7 @@ end
 function ShowTrack(hObj,~) 
 
     global Connections Debug 
-    if Debug,fprintf('SSViz++ Function = %s\n',ThisFunctionName);end
+    if Debug,fprintf('AdcL++ Function = %s\n',ThisFunctionName);end
     
 
     FigThatCalledThisFxn=gcbf;
@@ -1226,15 +1204,15 @@ end
 function InterpField(hObj,~) 
 
     global TheGrids Debug
-    if Debug,fprintf('SSViz++ Function = %s\n',ThisFunctionName);end
+    if Debug,fprintf('AdcL++ Function = %s\n',ThisFunctionName);end
 
     TheGrid=TheGrids{1};
 
     FigThatCalledThisFxn=gcbf;
-    MainVizAppFigure=findobj(FigThatCalledThisFxn,'Tag','MainVizAppFigure');
-    SSVizOpts=getappdata(FigThatCalledThisFxn,'SSVizOpts');
+    MainAdcLVizAppFigure=findobj(FigThatCalledThisFxn,'Tag','MainAdcLVizAppFigure');
+    ADCLOPTS=getappdata(FigThatCalledThisFxn,'AdcLOpts');
     
-    Handles=get(MainVizAppFigure,'UserData');
+    Handles=get(MainAdcLVizAppFigure,'UserData');
     cax=Handles.MainAxes; 
     xli=xlim(cax);
     yli=ylim(cax);
@@ -1256,7 +1234,7 @@ function InterpField(hObj,~)
         if InView
             %line(x,y,'Marker','o','Color','k','MarkerFaceColor','k','MarkerSize',5,'Tag','NodeMarker');
             % find element & interpolate scalar
-            if SSVizOpts.UseStrTree && isfield(TheGrid,'strtree') && ~isempty(TheGrid.strtree)
+            if ADCLOPTS.UseStrTree && isfield(TheGrid,'strtree') && ~isempty(TheGrid.strtree)
                 j=FindElementsInStrTree(TheGrid,x,y);
             else
                 j=findelem(TheGrid,x,y);
@@ -1300,8 +1278,8 @@ function Handles=InitializeUI(Opts)
 global Debug
 global Model
 
-fprintf('SSViz++ Setting up GUI ... \n')
-if Debug,fprintf('SSViz++ Function = %s\n',ThisFunctionName);end
+fprintf('AdcL++ Setting up GUI ... \n')
+if Debug,fprintf('AdcL++ Function = %s\n',ThisFunctionName);end
 
 FontOffset=Opts.FontOffset;
 AppName=Opts.AppName;
@@ -1339,7 +1317,7 @@ if ~ForkAxes
         'OuterPosition',[0.05 .2 Opts.AppWidthPercent/100 .877*Opts.AppWidthPercent/100],...
         'ToolBar','figure',...
         'DeleteFcn',@ShutDownUI,...
-        'Tag','MainVizAppFigure',...
+        'Tag','MainAdcLVizAppFigure',...
         'NumberTitle','off',...
         'Name',AppName,...
         'Resize','off');
@@ -1362,7 +1340,7 @@ else
         'OuterPosition',[0.52 .2 .45 .79],...
         'ToolBar','figure',...
         'DeleteFcn',@ShutDownUI,...
-        'Tag','MainVizAppFigure',...
+        'Tag','MainAdcLVizAppFigure',...
         'NumberTitle','off',...
         'Name',AppName,...
         'Resize','off');
@@ -1374,7 +1352,7 @@ else
         'OuterPosition',[0.05 .2 .9 .8],...
         'ToolBar','figure',...
         'DeleteFcn','',...
-        'Tag','MainVizAppFigureSub',...
+        'Tag','MainAdcLVizAppFigureSub',...
         'NumberTitle','off',...
         'Name',AppName,...
         'CloseRequestFcn','');
@@ -1573,7 +1551,7 @@ Handles.MainAxes=axes(...
     'Box','on',...
     'FontSize',fs0,...
     'Color',AxesBackgroundColor,...
-    'Tag','StormSurgeVizMainAxes','Layer','top');
+    'Tag','AdcircLiteMainAxes','Layer','top');
 
 
 StatusUrlBarContainerContainerContents;
@@ -1596,7 +1574,7 @@ SetParameterContainerContents;
             'Parent',Handles.ParameterControlPanel,...
             'Style','text',...
             'Units','normalized',...
-            'Position',[.01 voffset-0*dy .25 .05],...
+            'Position',[.01 voffset-0*dy .30 .05],...
             'BackGroundColor','w',...
             'HorizontalAlignment','right',...
             'FontSize',fs1,...
@@ -1606,7 +1584,7 @@ SetParameterContainerContents;
             'Parent',Handles.ParameterControlPanel,...
             'Style','edit',...
             'Units','normalized',...
-            'Position',[.5 voffset-0*dy  .25 .05],...
+            'Position',[.5 voffset-0*dy  .30 .05],...
             'HorizontalAlignment','left',...
             'BackGroundColor','w',...
             'Tag','ParameterControlsParameter1',...
@@ -1618,7 +1596,7 @@ SetParameterContainerContents;
             'Parent',Handles.ParameterControlPanel,...
             'Style','text',...
             'Units','normalized',...
-            'Position',[.01 voffset-1*dy  .25 .05],...
+            'Position',[.01 voffset-1*dy  .30 .05],...
             'BackGroundColor','w',...
             'HorizontalAlignment','right',...
             'FontSize',fs1,...
@@ -1628,7 +1606,7 @@ SetParameterContainerContents;
             'Parent',Handles.ParameterControlPanel,...
             'Style','edit',...
             'Units','normalized',...
-            'Position',[.5 voffset-1*dy  .25 .05],...
+            'Position',[.5 voffset-1*dy  .30 .05],...
             'HorizontalAlignment','left',...
             'BackGroundColor','w',...
             'Tag','ParameterControlsParameter2',...
@@ -1640,7 +1618,7 @@ SetParameterContainerContents;
             'Parent',Handles.ParameterControlPanel,...
             'Style','text',...
             'Units','normalized',...
-            'Position',[.01 voffset-2*dy  .25 .05],...
+            'Position',[.01 voffset-2*dy  .30 .05],...
             'BackGroundColor','w',...
             'HorizontalAlignment','right',...
             'FontSize',fs1,...
@@ -1650,7 +1628,7 @@ SetParameterContainerContents;
             'Parent',Handles.ParameterControlPanel,...
             'Style','edit',...
             'Units','normalized',...
-            'Position',[.5 voffset-2*dy  .25 .05],...
+            'Position',[.5 voffset-2*dy  .30 .05],...
             'HorizontalAlignment','left',...
             'BackGroundColor','w',...
             'Tag','ParameterControlsParameter3',...
@@ -1662,7 +1640,7 @@ SetParameterContainerContents;
             'Parent',Handles.ParameterControlPanel,...
             'Style','text',...
             'Units','normalized',...
-            'Position',[.01 voffset-3*dy .25 .05],...
+            'Position',[.01 voffset-3*dy .30 .05],...
             'BackGroundColor','w',...
             'HorizontalAlignment','right',...
             'FontSize',fs1,...
@@ -1672,7 +1650,7 @@ SetParameterContainerContents;
             'Parent',Handles.ParameterControlPanel,...
             'Style','edit',...
             'Units','normalized',...
-            'Position',[.5 voffset-3*dy .2 .05],...
+            'Position',[.5 voffset-3*dy .30 .05],...
             'HorizontalAlignment','left',...
             'BackGroundColor','w',...
             'Tag','ParameterControlsParameter4',...
@@ -1684,7 +1662,7 @@ SetParameterContainerContents;
             'Parent',Handles.ParameterControlPanel,...
             'Style','text',...
             'Units','normalized',...
-            'Position',[.01 voffset-5*dy .25 .05],...
+            'Position',[.01 voffset-5*dy .30 .05],...
             'BackGroundColor','w',...
             'HorizontalAlignment','right',...
             'FontSize',fs1,...
@@ -1694,7 +1672,7 @@ SetParameterContainerContents;
             'Parent',Handles.ParameterControlPanel,...
             'Style','edit',...
             'Units','normalized',...
-            'Position',[.5 voffset-5*dy .25 .05],...
+            'Position',[.5 voffset-5*dy .30 .05],...
             'HorizontalAlignment','left',...
             'BackGroundColor','w',...
             'Tag','ParameterControlsParameter5',...
@@ -1706,7 +1684,7 @@ SetParameterContainerContents;
             'Parent',Handles.ParameterControlPanel,...
             'Style','text',...
             'Units','normalized',...
-            'Position',[.01 voffset-4*dy .25 .05],...
+            'Position',[.01 voffset-4*dy .30 .05],...
             'BackGroundColor','w',...
             'HorizontalAlignment','right',...
             'FontSize',fs1,...
@@ -1716,7 +1694,7 @@ SetParameterContainerContents;
             'Parent',Handles.ParameterControlPanel,...
             'Style','edit',...
             'Units','normalized',...
-            'Position',[.5 voffset-4*dy .25 .05],...
+            'Position',[.5 voffset-4*dy .30 .05],...
             'HorizontalAlignment','left',...
             'BackGroundColor','w',...
             'Tag','ParameterControlsParameter6',...
@@ -1728,13 +1706,13 @@ SetParameterContainerContents;
             'Parent',Handles.ParameterControlPanel,...
             'Style','pushbutton',...
             'Units','normalized',...
-            'Position',[.1 voffset-8*dy .3 .05],...
+            'Position',[.1 voffset-8.1*dy .30 .05],...
             'HorizontalAlignment','left',...
             'BackGroundColor','w',...
             'Tag','EvaluateModel',...
             'FontSize',fs2,...
             'FontWeight','bold',...
-            'String','Eval Model',...
+            'String','Evaluate Model',...
             'CallBack',@EvaluateModel);
         
     end
@@ -2821,7 +2799,7 @@ SetParameterContainerContents;
         
         
     end
-    fprintf('SSViz++    Done.\n\n')
+    fprintf('AdcL++    Done.\n\n')
 
 end
 
@@ -2835,7 +2813,7 @@ end
 function ShowMaximum(hObj,~) 
 
     global TheGrids Debug
-    if Debug,fprintf('SSViz++ Function = %s\n',ThisFunctionName);end
+    if Debug,fprintf('AdcL++ Function = %s\n',ThisFunctionName);end
 
     TheGrid=TheGrids{1};
 
@@ -2870,7 +2848,7 @@ end
 function ShowMinimum(hObj,~) 
 
     global TheGrids Debug
-    if Debug,fprintf('SSViz++ Function = %s\n',ThisFunctionName);end
+    if Debug,fprintf('AdcL++ Function = %s\n',ThisFunctionName);end
     
     TheGrid=TheGrids{1};
 
@@ -2956,10 +2934,10 @@ function ShowMapThings(hObj,~)
 
     FigThatCalledThisFxn=gcbf;
     Handles=get(FigThatCalledThisFxn,'UserData');
-    temp1=findobj(Handles.MainAxes,'Tag','SSVizShapesCounties');
-    temp2=findobj(Handles.MainAxes,'Tag','SSVizShapesRoadways');
-    temp3=findobj(Handles.MainAxes,'Tag','SSVizShapesStateLines');
-    temp4=findobj(Handles.MainAxes,'Tag','SSVizShapesCities');
+    temp1=findobj(Handles.MainAxes,'Tag','AdcLShapesCounties');
+    temp2=findobj(Handles.MainAxes,'Tag','AdcLShapesRoadways');
+    temp3=findobj(Handles.MainAxes,'Tag','AdcLShapesStateLines');
+    temp4=findobj(Handles.MainAxes,'Tag','AdcLShapesCities');
     temp=[temp1(:);temp2(:);temp3(:);temp4(:)];
     axes(Handles.MainAxes);
     
@@ -2968,10 +2946,10 @@ function ShowMapThings(hObj,~)
         Shapes=LoadShapes;
         setappdata(Handles.MainAxes,'Shapes',Shapes);
         %SetUIStatusMessage('Done.')
-        h=plotroads(Shapes.major_roads,'Color',[1 1 1]*.4,'Tag','SSVizShapesRoadways','LineWidth',2);
-        h=plotcities(Shapes.cities,'Tag','SSVizShapesCities'); 
-        h=plotroads(Shapes.counties,'Tag','SSVizShapesCounties'); 
-        h=plotstates(Shapes.states,'Color','b','LineWidth',1,'Tag','SSVizShapesStateLines'); 
+        h=plotroads(Shapes.major_roads,'Color',[1 1 1]*.4,'Tag','AdcLShapesRoadways','LineWidth',2);
+        h=plotcities(Shapes.cities,'Tag','AdcLShapesCities'); 
+        h=plotroads(Shapes.counties,'Tag','AdcLShapesCounties'); 
+        h=plotstates(Shapes.states,'Color','b','LineWidth',1,'Tag','AdcLShapesStateLines'); 
         %Shapes=getappdata(Handles.MainAxes,'Shapes');
         set(hObj,'String','Hide Roads/Counties')
     else
@@ -3005,11 +2983,11 @@ function SetTitleOld(RunProperties)
     % caller:  I.e., it must be placed after
     % "set(Handles.MainFigure,'UserData',Handles);"
     
-    f=findobj(0,'Tag','MainVizAppFigure');
+    f=findobj(0,'Tag','MainAdcLVizAppFigure');
     Handles=get(f,'UserData');
-    SSVizOpts=getappdata(Handles.MainFigure,'SSVizOpts');              
+    ADCLOPTS=getappdata(Handles.MainFigure,'AdcLOpts');              
         
-    LocalTimeOffset=SSVizOpts.LocalTimeOffset;
+    LocalTimeOffset=ADCLOPTS.LocalTimeOffset;
     DateStringFormat=getappdata(Handles.MainFigure,'DateStringFormatOutput');
     
     advisory=GetRunProperty(RunProperties,'advisory');

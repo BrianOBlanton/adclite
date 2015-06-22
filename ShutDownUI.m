@@ -4,9 +4,9 @@
 function ShutDownUI(~,~)
 
     global Debug
-    if Debug,fprintf('SSViz++  Function = %s\n',ThisFunctionName);end
+    if Debug,fprintf('AdcL++  Function = %s\n',ThisFunctionName);end
     
-    fprintf('\nSSViz++ Shutting Down StormSurgeViz GUI.\n');
+    fprintf('\nAdcL++ Shutting Down AdcircLite GUI.\n');
    
     FigThatCalledThisFxn=gcbf;
     Handles=get(FigThatCalledThisFxn,'UserData');
