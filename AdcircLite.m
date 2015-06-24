@@ -900,6 +900,7 @@ function ExportShapeFile(~,~)
     
     FigHandle=gcbf;
     Handles=get(FigHandle,'UserData');
+    TempDataLocation=getappdata(Handles.MainFigure,'TempDataLocation');
     
 %     ScalarSnapshotClicked=floor(get(Handles.ScalarSnapshotSliderHandle,'Value')); 
 % 
@@ -945,8 +946,10 @@ function ExportShapeFile(~,~)
     title(sprintf('GeoShow view of exported Shape File in %s',strrep(OutName,'_','\_')))
     axes(Handles.MainAxes);
 
-    shapewrite(SS,sprintf('%s.shp',OutName))
-    SetUIStatusMessage(sprintf('Done. Shape File = %s/%s\n',pwd,OutName))
+    OutFullName = fullfile(TempDataLocation,OutName);
+    OutFullSpec = sprintf('%s.shp',OutFullName)
+    shapewrite(SS,OutFullSpec)
+    SetUIStatusMessage(sprintf('Done. Shape File = %s\n',OutFullSpec))
 
 end
 

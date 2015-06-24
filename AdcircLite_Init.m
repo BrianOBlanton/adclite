@@ -38,8 +38,8 @@ ADCLHOME=HOME;
 if isdeployed
     ADCLHOME=fullfile(USERHOME, AdclDirectory);
 end
-TempDataDirectory='/TempData';
-TempDataLocation=[PWD TempDataDirectory]; 
+TempDataDirectory='TempData';
+TempDataLocation=fullfile(PWD, TempDataDirectory); 
 if isdeployed
     TempDataLocation=fullfile(ADCLHOME, TempDataDirectory);
 end
