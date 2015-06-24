@@ -4,19 +4,19 @@
 function Handles=MakeTheAxesMap(Handles)
 
     global TheGrids Debug
-    if Debug,fprintf('SSViz++ Function = %s\n',ThisFunctionName);end
+    if Debug,fprintf('AdcL++ Function = %s\n',ThisFunctionName);end
    
     TheGrid=TheGrids{1};
 
     axes(Handles.MainAxes);
     
     FontSizes=getappdata(Handles.MainFigure,'FontSizes');    
-    SSVizOpts=getappdata(Handles.MainFigure,'SSVizOpts');              
-    ColorBarLocation=SSVizOpts.ColorBarLocation;
-    HOME=SSVizOpts.HOME;
-    DisableContouring=SSVizOpts.DisableContouring;
+    ADCLOPTS=getappdata(Handles.MainFigure,'AdcLOpts');              
+    ColorBarLocation=ADCLOPTS.ColorBarLocation;
+    HOME=ADCLOPTS.HOME;
+    DisableContouring=ADCLOPTS.DisableContouring;
 
-    axx=SSVizOpts.BoundingBox;
+    axx=ADCLOPTS.BoundingBox;
     if isnan(axx),axx=[min(TheGrid.x) max(TheGrid.x) min(TheGrid.y) max(TheGrid.y)];end
     cla
     

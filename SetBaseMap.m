@@ -4,7 +4,7 @@
 function SetBaseMap(~,~,~)
 
     global Debug
-   if Debug,fprintf('SSViz++ Function = %s\n',ThisFunctionName);end
+   if Debug,fprintf('AdcL++ Function = %s\n',ThisFunctionName);end
 
     FigThatCalledThisFxn=gcbf;
     Handles=get(FigThatCalledThisFxn,'UserData');

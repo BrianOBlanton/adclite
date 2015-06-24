@@ -1,5 +1,9 @@
 /Model/*
+Model.tar
 *~
 TempData
 *swp
+*.old
+FileName*
+api_key.mat
 

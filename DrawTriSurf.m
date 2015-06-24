@@ -4,7 +4,7 @@
 function Handles=DrawTriSurf(Handles,GridId,Units,Field)
 
     global TheGrids Debug
-    if Debug,fprintf('SSViz++ Function = %s\n',ThisFunctionName);end
+    if Debug,fprintf('AdcL++ Function = %s\n',ThisFunctionName);end
 
     TheGrid=TheGrids{GridId};
 

@@ -4,7 +4,7 @@
 function UpdateUI(varargin)
 
     global Debug TheGrids
-    if Debug,fprintf('SSViz++ Function = %s\n',ThisFunctionName);end
+    if Debug,fprintf('AdcL++ Function = %s\n',ThisFunctionName);end
 
     SetUIStatusMessage('Updating GUI ... \n')
 
@@ -20,14 +20,14 @@ function UpdateUI(varargin)
 
     Handles=get(FigHandle,'UserData');
 
-    SSVizOpts=getappdata(FigHandle,'SSVizOpts');
+    ADCLOPTS=getappdata(FigHandle,'AdcLOpts');
 
-    LocalTimeOffset=SSVizOpts.LocalTimeOffset;
-    GridName=SSVizOpts.GridName;
-    ModelName=SSVizOpts.ModelName;    
+    LocalTimeOffset=ADCLOPTS.LocalTimeOffset;
+    GridName=ADCLOPTS.GridName;
+    ModelName=ADCLOPTS.ModelName;    
    
 %    ColorIncrement=getappdata(FigHandle,'ColorIncrement');
-    ColorIncrement=SSVizOpts.ColorIncrement;
+    ColorIncrement=ADCLOPTS.ColorIncrement;
      Field=getappdata(Handles.TriSurf,'Field');
 %     %FontSizes=getappdata(Handles.MainFigure,'FontSizes');
 %     
@@ -47,7 +47,7 @@ function UpdateUI(varargin)
     %set(Handles.NCol,'String',sprintf('%d',ncol))
     %setappdata(FigHandle,'NumberOfColors',ncol);
     
-    SetColors(Handles,CMin,CMax,SSVizOpts.NumberOfColors,SSVizOpts.ColorIncrement);
+    SetColors(Handles,CMin,CMax,ADCLOPTS.NumberOfColors,ADCLOPTS.ColorIncrement);
 
     str=sprintf('# Elements = %d\n# Nodes    = %d',size(TheGrids{1}.e,1), size(TheGrids{1}.x,1));
 

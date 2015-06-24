@@ -1,8 +1,6 @@
-function p=StormSurgeVizOptions
-% StormSurgeVizOptions - Parameters that can be used to influence the behavior
-% of StormSurgeViz.  These are passed in as options to StormSurgeViz, or can be set 
-% in the user's MyStormSurgeViz_Init.m.  A template MyStormSurgeViz_Init.m file is
-% in the StormSurgeViz directory. 
+function p=AdcircLiteOptions
+% AdcircLiteOptions - Parameters that can be used to influence the behavior
+% of AdcircLite.  These are passed in as options to AdcircLite. 
 
 p=struct;
 

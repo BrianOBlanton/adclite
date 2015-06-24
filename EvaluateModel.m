@@ -1,7 +1,7 @@
 function EvaluateModel(hObj,~)
    global  Debug Model  ADCLOPTS TheGrid
    if Debug
-       fprintf('SSViz++ Function = %s\n',ThisFunctionName)
+       fprintf('AdcL++ Function = %s\n',ThisFunctionName)
        hObj;
    end
    
@@ -19,14 +19,14 @@ function EvaluateModel(hObj,~)
    
    zhat = central_ckv(Model.P, Model.R, Model.c, Model.k, Model.weights, Model.n_d, Model.index, X);
    
-    ThisData=NaN*ones(TheGrid.nn,1);
-    ThisData(TheGrid.idx)=zhat;
-    Handles=DrawTriSurf(Handles,1,ADCLOPTS.Units,ThisData);
+   ThisData=NaN*ones(TheGrid.nn,1);
+   ThisData(TheGrid.idx)=zhat;
+   Handles=DrawTriSurf(Handles,1,ADCLOPTS.Units,ThisData);
     
-    SetColors(Handles,min(ThisData),max(ThisData),ADCLOPTS.NumberOfColors,ADCLOPTS.ColorIncrement);
+   SetColors(Handles,min(ThisData),max(ThisData),ADCLOPTS.NumberOfColors,ADCLOPTS.ColorIncrement);
 
-    set(FigHandle,'UserData',Handles);
+   set(FigHandle,'UserData',Handles);
     
-    UpdateUI(FigHandle);
+   UpdateUI(FigHandle);
 
 end
