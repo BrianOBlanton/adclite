@@ -5,6 +5,8 @@ function Handles=DrawTriSurf(Handles,GridId,Units,Field)
 
     global TheGrids Debug
     if Debug,fprintf('AdcL++ Function = %s\n',ThisFunctionName);end
+    
+    SetUIStatusMessage('Drawing Trisurf ... \n')
 
     TheGrid=TheGrids{GridId};
 

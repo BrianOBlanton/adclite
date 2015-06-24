@@ -2,7 +2,7 @@ function EvaluateModel(hObj,~)
    global  Debug Model  ADCLOPTS TheGrid
    if Debug
        fprintf('AdcL++ Function = %s\n',ThisFunctionName)
-       hObj;
+       %hObj;
    end
    
    FigHandle=gcbf;
