@@ -78,7 +78,7 @@ Windows Installation
 15. Click "Finish" on the final dialog.
 
 Running the Windows Application
-===========================
+===============================
 
 1. In the All Programs menu, double click on adclite.
 2. The first time you run ADCLite, you will see a RENCI logo
@@ -93,8 +93,8 @@ Running the Windows Application
    Downloading new model data may take a several minutes, just
    like when the first time ADCLite was first run.
 
-Uninstalling the OSX Application
-================================
+Uninstalling the Windows Application
+====================================
 
 1. In the Windows Control Panel/Features and Programs, uninstall
    adclite.
