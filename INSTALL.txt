@@ -1,0 +1,103 @@
+ADCLite Installation Instructions
+=================================
+
+Installers are available for OSX (10.10+) and Windows (7+).
+
+OSX Installation
+================
+
+1. Point a web browser to ftp.renci.org/outgoing/adclist
+2. Click on adclite_installer_osx_web.mcr to download.
+3. After download, open your Downloads folder in Finder.
+4. Double click on adclite_installer_osx_mcr.zip to expand it.
+5. Click on the expanded adclite_installer_osx_mcr.app
+   **while holding down the control key** to run it.
+   If you see a dialog saying you may not install the application
+   because it was downloaded from an unidentified developer,
+   that means you did not hold down the control key. Try again.
+6. Click "Yes" on the install from an unidentified developer dialog.
+7. A RENCI logo dialog will appear and shortly disappear.
+8. Enter your OSX login password into the password dialog.
+9. Click "Next" on the installer information dialog.
+10. Click "Next" on the installation folder dialog.
+11. Click "Yes" on the create installation folder dialog.
+12. Click "Next" on the MATLAB© Runtime dialog.
+13. Click "Yes" on the create runtime folder dialog.
+14. Click "Yes' on the MATLAB© license dialog.
+15. Then click "Next" on the same licence dialog.
+16. Click "Install" on the installation dialog.
+17. Be patient while the application installs.
+18. Click "Finish" on the final dialog.
+
+Running the OSX Application
+===========================
+
+1. If you accepted the recommended default application folder
+   during installation, then in Finder double click on:
+   /Applications/RENCI/adclite/application/adclite.app
+2. The first time you run ADCLite, it will take several minutes
+   to download up to date model data before the application
+   window appears. Be patient if you see the RENCI logo activated
+   on the OSX application dock.
+3. Do not have MATLAB© open while ADCLite is open.
+4. Do not try to open two instances of ADCLite at the same time.
+5. Exported shapefiles will appear in ~/.adclite/TempData.
+   A command prompt is required to view this folder.
+6. To update model data, delete ~/.adclite/Model.tar and
+   ~/.adclite/Model, then restart ADCLite. Downloading new model
+   data may take a few minutes, just like when the first time
+   ADCLite was first run.
+
+Uninstalling the OSX Application
+================================
+
+1. Send the /Applications/RENCI folder to the trash.
+2. Send the ~/.adclite folder to the trash.
+3. Send the /Applications/MATLAB/MATLAB_Runtime folder to the trash.
+
+Windows Installation
+====================
+
+1. Point a web browser to ftp.renci.org/outgoing/adclist
+2. Click on adclite_installer_win64_mcr.exe to download.
+3. After download, open your Downloads folder in Explorer.
+4. Double click on adclite_installer_win64_mcr.exe.
+5. A RENCI logo dialog will appear and shortly disappear.
+6. Click "Next" on the installer information dialog.
+7. Click on "Add a shortcut to the desktop" if you desire
+   an ADCLite shortcut on your desktop. A shortcut will
+   always be added to your All Programs menu.
+7. Click "Next" on the installation folder dialog.
+8. Click "Yes" on the create installation folder dialog.
+9. Click "Next" on the MATLAB© Runtime dialog.
+10. Click "Yes" on the create runtime folder dialog.
+11. Click "Yes" on the MATLAB© license dialog.
+12. Then click "Next" on the same licence dialog.
+13. Click "Install" on the installation dialog.
+14. Be patient while the application installs.
+15. Click "Finish" on the final dialog.
+
+Running the Windows Application
+===========================
+
+1. In the All Programs menu, double click on adclite.
+2. The first time you run ADCLite, you will see a RENCI logo
+   cover the entire screen for several minutes while up to date
+   model data is downloaded. Please be patient.
+3. Do not have MATLAB© open while ADCLite is open.
+4. Do not try to open two instances of ADCLite at the same time.
+5. Exported shapefiles will appear in the .adclite/TempData folder
+   in your home directory.
+6. To update model data, delete .adclite/Model.tar and
+   .adclite/Model in your home directory, then restart ADCLite.
+   Downloading new model data may take a several minutes, just
+   like when the first time ADCLite was first run.
+
+Uninstalling the OSX Application
+================================
+
+1. In the Windows Control Panel/Features and Programs, uninstall
+   adclite.
+2. In the Windows Control Panel/Features and Programs, uninstall
+   the MATLAB© Runtime.
+3. In your home directory, remove the .adclite folder.
