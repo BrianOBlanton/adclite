@@ -6,8 +6,8 @@ Installers are available for OSX (10.10+) and Windows (7+).
 OSX Installation
 ================
 
-1. Point a web browser to ftp.renci.org/outgoing/adclist
-2. Click on adclite_installer_osx_web.mcr to download.
+1. Point a web browser to ftp://ftp.renci.org/outgoing/adclist
+2. Click on adclite_installer_osx_web_mcr.zip to download.
 3. After download, open your Downloads folder in Finder.
 4. Double click on adclite_installer_osx_mcr.zip to expand it.
 5. Click on the expanded adclite_installer_osx_mcr.app
@@ -58,7 +58,7 @@ Uninstalling the OSX Application
 Windows Installation
 ====================
 
-1. Point a web browser to ftp.renci.org/outgoing/adclist
+1. Point a web browser to ftp://ftp.renci.org/outgoing/adclist
 2. Click on adclite_installer_win64_mcr.exe to download.
 3. After download, open your Downloads folder in Explorer.
 4. Double click on adclite_installer_win64_mcr.exe.
