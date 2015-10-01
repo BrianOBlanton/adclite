@@ -99,5 +99,7 @@ Uninstalling the Windows Application
 1. In the Windows Control Panel/Features and Programs, uninstall
    adclite.
 2. In the Windows Control Panel/Features and Programs, uninstall
-   the MATLAB© Runtime.
+   the MATLAB© Runtime. (If you also have MATLAB© installed, be
+   careful not to uninstall it. MATLAB© Runtime is a separate product
+   from MATLAB©.)
 3. In your home directory, remove the .adclite folder.
