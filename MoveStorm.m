@@ -12,14 +12,14 @@ function MoveStorm(~,~)
     newx=temp(1);
 
     tag=get(gco,'Tag');
-    disp(tag)
+    %disp(tag)
     
     switch tag
         case {'L1Line', 'L1Marker'}
            h=line(newx,latitudeInterceptionParallel1.lat(1),1,'Color','b','Marker','*','MarkerSize',20,'Tag','L1Marker','ButtonDownFcn',@MoveStorm);
            newp=newx-latitudeInterceptionParallel1.lon(1);
            i=5;
-        case 'L2Line'
+        case {'L2Line', 'L2Marker'}
            h=line(newx,latitudeInterceptionParallel4.lat(1),1,'Color','b','Marker','*','MarkerSize',20,'Tag','L2Marker','ButtonDownFcn',@MoveStorm);
            newp=newx-latitudeInterceptionParallel4.lon(1);
            i=6;
