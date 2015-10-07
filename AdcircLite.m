@@ -108,6 +108,11 @@ fprintf('AdcL++ Loading RSM ... \n')
 
 TheGrids{1}=TheGrid;
 
+% edit the default track to get the Lat1 and Lat2 locations within the
+% viewing window
+Model.X(5)=6;
+Model.X(6)=5;
+
 %% InitializeUI
 Handles=InitializeUI(ADCLOPTS);
 
@@ -137,7 +142,6 @@ set(Handles.MainFigure,'Pointer','watch');
 %% MakeTheAxesMap
 SetUIStatusMessage('Making default plot ... \n')
 Handles=MakeTheAxesMap(Handles);  
-
 
 % evaluate the default response, in the vector X of Model
 P1=get(Handles.ParameterControlsParameter(1),'String');P1=str2double(P1);
@@ -262,8 +266,6 @@ function DrawDepthContours(hObj,~)
     end
 
 end
-
-
 
 %%  DrawTrack
 %%% DrawTrack
