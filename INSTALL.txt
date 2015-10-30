@@ -1,13 +1,13 @@
 ADCLite Installation Instructions
 =================================
 
-Installers are available for OSX (10.10+) and Windows (7+).
+Installers are available for OSX (10.10+), Windows (7+), and Linux (64-bit).
 
 OSX Installation
 ================
 
-1. Point a web browser to ftp://ftp.renci.org/outgoing/adclist
-2. Click on adclite_installer_osx_web_mcr.zip to download.
+1. Point a web browser to ftp://ftp.renci.org/outgoing/adclite
+2. Click on adclite_installer_osx_mcr.zip to download.
 3. After download, open your Downloads folder in Finder.
 4. Double click on adclite_installer_osx_mcr.zip to expand it.
 5. Click on the expanded adclite_installer_osx_mcr.app
@@ -58,7 +58,7 @@ Uninstalling the OSX Application
 Windows Installation
 ====================
 
-1. Point a web browser to ftp://ftp.renci.org/outgoing/adclist
+1. Point a web browser to ftp://ftp.renci.org/outgoing/adclite
 2. Click on adclite_installer_win64_mcr.exe to download.
 3. After download, open your Downloads folder in Explorer.
 4. Double click on adclite_installer_win64_mcr.exe.
@@ -103,3 +103,71 @@ Uninstalling the Windows Application
    careful not to uninstall it. MATLAB© Runtime is a separate product
    from MATLAB©.)
 3. In your home directory, remove the .adclite folder.
+
+Linux Installation
+==================
+
+1. Point a web browser to ftp://ftp.renci.org/outgoing/adclite
+2. Click on adclite_installer_lin64_mcr.install, ADCLite, and McrInit to download.
+3. After download, open a terminal prompt and change directories
+   to your Downloads folder.
+4. At the prompt:
+       chmod +x adclite_installer_lin64_mcr.install
+       chmod +x McrInit
+       chmod +x ADCLite
+   to make them executable.
+5. At the prompt:
+       sudo ./adclite_installer_lin64_mcr.install
+   to run it. Enter your password when prompted. In several seconds
+   an installer dialog will appear.
+6. Click "Next" on the installer information dialog.
+7. Click "Next" on the installation folder dialog.
+8. Click "Next" on the MATLAB© Runtime folder dialog.
+9. Click "Yes' on the MATLAB© license dialog.
+10. Then click "Next" on the same licence dialog.
+11. Click "Install" on the installation dialog.
+12. Be patient while the application installs.
+13. Click "Finish" on the final dialog.
+14. At the prompt:
+        mv McrInit ~
+        mv ADCLite ~
+        cd ~
+15. At the prompt (now in your home directory):
+        su
+    Then enter the root password. The next step requires this and
+    will not work with mere sudo. You must have the root password.
+16. At the prompt (now switched to the root user):
+        source McrInit
+        ldconfig
+        exit
+
+Running the Linux Application
+=============================
+
+1. If you accepted the recommended default application folder
+   during installation, at a terminal prompt in your home directory:
+       ./ADCLite
+2. The first time you run ADCLite, it will take several minutes
+   to download up to date model data before the application
+   window appears. You will see progress messages in the terminal window.
+3. Do not have MATLAB© open while ADCLite is open.
+4. Do not try to open two instances of ADCLite at the same time.
+5. Exported shapefiles will appear in ~/.adclite/TempData.
+   A command prompt is required to view this folder.
+6. To update model data, delete ~/.adclite/Model.tar and
+   ~/.adclite/Model, then restart ADCLite. Downloading new model
+   data may take a few minutes, just like when the first time
+   ADCLite was first run.
+
+Uninstalling the Linux Application
+==================================
+
+At a terminal prompt:
+
+    sudo rm -rf /usr/local/UNC_RENCI
+    sudo rm -rf /usr/local/MATLAB/MATLAB_Runtime
+    rm -rf ~/.adclite
+    rm McrInit
+    rm ADCLite
+
+and enter your password when prompted.
