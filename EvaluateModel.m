@@ -1,32 +1,49 @@
-function EvaluateModel(hObj,~)
+%%  EvaluateModel
+%%% EvaluateModel
+%%% EvaluateModel
+function EvaluateModel(varargin)
+
    global  Debug Model  ADCLOPTS TheGrid
+   
+   if nargin==1  % called as function
+       FigHandle=varargin{1};
+   else  % called as callback
+       %hObj=varargin{1};
+       %event=varargin{2};
+       FigHandle=gcbf;
+   end
+       
    if Debug
        fprintf('AdcL++ Function = %s\n',ThisFunctionName)
        %hObj;
    end
    
-   FigHandle=gcbf;
    Handles=get(FigHandle,'UserData');
     
-   P1=get(Handles.ParameterControlsParameter(1),'String');P1=str2double(P1);
-   P2=get(Handles.ParameterControlsParameter(2),'String');P2=str2double(P2);
-   P3=get(Handles.ParameterControlsParameter(3),'String');P3=str2double(P3);
-   P4=get(Handles.ParameterControlsParameter(4),'String');P4=str2double(P4);
-   P5=get(Handles.ParameterControlsParameter(5),'String');P5=str2double(P5);
-   P6=get(Handles.ParameterControlsParameter(6),'String');P6=str2double(P6);
+   P=getRsmParameters(Handles);
    
-   X=[P1 P2 P3 P4 P5 P6]';
-   
-   zhat = central_ckv(Model.P, Model.R, Model.c, Model.k, Model.weights, Model.n_d, Model.index, X);
+    Lon_South_Offset = Model.CrossingLines.LatitudeInterceptionParallel1.lon(1);
+    %Lat_South_Offset = Model.CrossingLines.LatitudeInterceptionParallel1.lat(1);
+    Lon_North_Offset = Model.CrossingLines.LatitudeInterceptionParallel4.lon(1);
+    %Lat_North_Offset = Model.CrossingLines.LatitudeInterceptionParallel4.lat(1);
+    
+   % remove longitude 
+   P(5)=P(5)-Lon_South_Offset;
+   P(6)=P(6)-Lon_North_Offset;
+  
+   zhat = central_ckv(Model.P, Model.R, Model.c, Model.k, Model.weights, Model.n_d, Model.index, P');
    
    ThisData=NaN*ones(TheGrid.nn,1);
    ThisData(TheGrid.idx)=zhat;
    Handles=DrawTriSurf(Handles,1,ADCLOPTS.Units,ThisData);
-    
-   SetColors(Handles,min(ThisData),max(ThisData),ADCLOPTS.NumberOfColors,ADCLOPTS.ColorIncrement);
-
+   
+   fc=get(Handles.FixCMap,'Value');
+   if ~fc
+       SetColors(Handles,min(ThisData),max(ThisData),ADCLOPTS.NumberOfColors,ADCLOPTS.ColorIncrement);
+   end
+   
    set(FigHandle,'UserData',Handles);
     
    UpdateUI(FigHandle);
-
+   
 end

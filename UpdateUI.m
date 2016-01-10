@@ -47,8 +47,11 @@ function UpdateUI(varargin)
     %set(Handles.NCol,'String',sprintf('%d',ncol))
     %setappdata(FigHandle,'NumberOfColors',ncol);
     
-    SetColors(Handles,CMin,CMax,ADCLOPTS.NumberOfColors,ADCLOPTS.ColorIncrement);
-
+    fc=get(Handles.FixCMap,'Value');
+    if ~fc    
+        SetColors(Handles,CMin,CMax,ADCLOPTS.NumberOfColors,ADCLOPTS.ColorIncrement);
+    end
+    
     str=sprintf('# Elements = %d\n# Nodes    = %d',size(TheGrids{1}.e,1), size(TheGrids{1}.x,1));
 
     set(Handles.ModelGridName,  'String',GridName)

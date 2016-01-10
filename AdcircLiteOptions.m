@@ -15,6 +15,7 @@ p.Url='';
 % feature options
 p.Verbose=true;
 p.Debug=true;
+p.UseInMemoryModel=false;
 p.DisableContouring=false;
 p.LocalTimeOffset=0;
 p.UseStrTree=false;
@@ -23,7 +24,7 @@ p.UseShapeFiles=true;
 p.KeepScalarsAndVectorsInSync=true;
 
 p.Units={'Meters','Metric','Feet','English'};
-p.DepthContours='10 50 100 500 1000 3000';  % depths must be enclosed in single quotes
+p.DepthContours='0 10 50 100 500 1000 3000';  % depths must be enclosed in single quotes
 
 % color options
 p.ColorIncrement=.25;    % in whatever units
@@ -32,7 +33,6 @@ p.ColorMax=NaN;
 p.ColorMin=NaN;
 p.ColorMap='parula';
 p.ColorBarLocation={'EastOutside','SouthOutside','NorthOutside','WestOutside','North','South','East','West'};
-
 
 % GUI options
 %ScreenTake=100; % percent of screen width to take up

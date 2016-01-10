@@ -6,10 +6,7 @@ function zhat = central_ckv(Parameters, Response, c, k, weights, N_d, index, x)
 % second one prepares the matrices needed
 % third one selects a different input vector and runs the model
 
-
-
 %%
-
 
 v_aux=diag(1./mean(Parameters,1));             %normalization of model parameters 
 Normalized_P=v_aux*Parameters';                %convert model parameters to normalised space
@@ -39,7 +36,6 @@ numer=Response-repmat(mean_R,NSupportPoints,1);
 S = sparse(1:size(mean_R,2),1:size(mean_R,2),1./std_R);
 Normalized_R=numer*S;
 
-
 % call surrogate model to calculate response
 % f=sur_model(x,v_aux,v,yb,n_d,c,k,B,F,mean_F,std_F,ns,index);
 % x = P(i,:)';
@@ -55,6 +51,3 @@ zhat = sur_model(x,v_aux,...
                  mean_R,std_R,...
                  NSupportPoints,...
                  index);
-             
-
-

@@ -45,14 +45,14 @@ if isdeployed
 end
 DateStringFormatInput='yyyy-mm-dd HH:MM:SS';
 DateStringFormatOutput='ddd, dd mmm, HH:MM PM';
-ModelName='pre_00_CV_DB_two_prime_HS';
+ModelName='pre_00_CV_DB_two_prime_maxele_100_HS';
 GridName='nc_inundation_v9.81_adjVAB_MSL';
 ModelDir='Model';
 ModelFile='Model.tar';
 ModelURL='http://people.renci.org/~bblanton/data/Model.tar';
 
 % name of Java Topology Suite file
-jts='jts-1.9.jar';
+%jts='jts-1.9.jar';
 
 %% Default PN/PVs
 fprintf('AdcL++ Processing Input Parameter/Value Pairs...\n')
@@ -74,15 +74,16 @@ fprintf('AdcL++ %s\n',ADCLOPTS.AppName')
 ADCLOPTS.HOME = HOME;
 %cd(ADCLOPTS.HOME)
 
-if ADCLOPTS.UseStrTree
-    f=[ADCLOPTS.HOME '/extern/' jts];
-    if exist(f,'file')
-        javaaddpath(f);
-    else
-        disp('Can''t add jts file to javaclasspath.   Disabling strtree searching.')
-        ADCLOPTS.UseStrTree=false;
-    end
-end
+% 
+% if ADCLOPTS.UseStrTree
+%     f=[ADCLOPTS.HOME '/extern/' jts];
+%     if exist(f,'file')
+%         javaaddpath(f);
+%     else
+%         disp('Can''t add jts file to javaclasspath.   Disabling strtree searching.')
+%         ADCLOPTS.UseStrTree=false;
+%     end
+% end
 
 ADCLOPTS.HasMapToolBox=false;
 if ~isempty(which('almanac'))
@@ -106,26 +107,13 @@ if isdeployed
     end
 end
 
-if ~exist(TempDataLocation,'dir')
-    fprintf(sprintf('\nAdcL++ Creating TempData at %s.\n', TempDataLocation))
-    mkdir(TempDataLocation)
-end
+% if ~exist(TempDataLocation,'dir')
+%     fprintf(sprintf('\nAdcL++ Creating TempData at %s.\n', TempDataLocation))
+%     mkdir(TempDataLocation)
+% end
 
 %%
-if isunix
-    mvcom='mv';
-    cpcom='cp';
-else
-    mvcom='move';
-    cpcom='copy';
-end
-
 if ~isempty(ADCLOPTS.BoundingBox),ADCLOPTS.DefaultBoundingBox=ADCLOPTS.BoundingBox;end
-
-%SetVectorOptions('Stride',100,'ScaleFac',25,'Color','k')
-%VectorOptions.Stride=100;
-%VectorOptions.ScaleFac=25;
-%VectorOptions.Color='k';
 
 %%% clean up after initialization
 clear jts
