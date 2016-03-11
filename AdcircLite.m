@@ -367,6 +367,8 @@ function Handles=MakeTheAxesMap(Handles)
         DepthContours=sscanf(DepthContours,'%d');
         Handles.BathyContours=lcontour(TheGrid,TheGrid.z,DepthContours,'Color','k');
         
+        Handles.BathyContours=Handles.BathyContours(Handles.BathyContours~=0);
+        
         for i=1:length(Handles.BathyContours)
             nz=2*ones(size(get(Handles.BathyContours(i),'XData')));
             set(Handles.BathyContours(i),'ZData',nz)
@@ -911,8 +913,8 @@ AxesBackgroundColor=[1 1 1]*.6;
 colormaps={'parula','noaa_cmap','jet','hsv','hot','cool','gray'};
 cmapidx=find(strcmp(ColorMap,colormaps));
 
-Lon_South_Offset = Model.CrossingLines.LatitudeInterceptionParallel1.lon(1); 
-Lon_North_Offset = Model.CrossingLines.LatitudeInterceptionParallel4.lon(1); 
+Lon_South_Offset = Model.CrossingLines.LatSouth.lon(1); 
+Lon_North_Offset = Model.CrossingLines.LatNorth.lon(1); 
    
 % normalized positions of container panels depend on ForkAxes
 if ~ForkAxes

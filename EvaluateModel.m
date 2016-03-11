@@ -22,14 +22,14 @@ function EvaluateModel(varargin)
     
    P=getRsmParameters(Handles);
    
-    Lon_South_Offset = Model.CrossingLines.LatitudeInterceptionParallel1.lon(1);
-    %Lat_South_Offset = Model.CrossingLines.LatitudeInterceptionParallel1.lat(1);
-    Lon_North_Offset = Model.CrossingLines.LatitudeInterceptionParallel4.lon(1);
-    %Lat_North_Offset = Model.CrossingLines.LatitudeInterceptionParallel4.lat(1);
-    
-   % remove longitude 
-   P(5)=P(5)-Lon_South_Offset;
-   P(6)=P(6)-Lon_North_Offset;
+   Lon_South_Offset = Model.CrossingLines.LatSouth.lon(1);
+   %Lat_South_Offset = Model.CrossingLines.LatSouth.lat(1);
+   Lon_North_Offset = Model.CrossingLines.LatNorth.lon(1);
+   %Lat_North_Offset = Model.CrossingLines.LatNorth.lat(1);
+   
+   % remove longitude
+   P(5)=P(5)-Lon_North_Offset;
+   P(6)=P(6)-Lon_South_Offset;
   
    zhat = central_ckv(Model.P, Model.R, Model.c, Model.k, Model.weights, Model.n_d, Model.index, P');
    

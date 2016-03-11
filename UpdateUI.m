@@ -22,7 +22,6 @@ function UpdateUI(varargin)
 
     ADCLOPTS=getappdata(FigHandle,'AdcLOpts');
 
-    %LocalTimeOffset=ADCLOPTS.LocalTimeOffset;
     GridName=ADCLOPTS.GridName;
     ModelName=ADCLOPTS.ModelName;    
    
@@ -30,9 +29,6 @@ function UpdateUI(varargin)
     ColorIncrement=ADCLOPTS.ColorIncrement;
      Field=getappdata(Handles.TriSurf,'Field');
 %     %FontSizes=getappdata(Handles.MainFigure,'FontSizes');
-%     
-% %     set(Handles.Field_Maximum,'String',sprintf('Maximum = %f',max(Field)))
-% %     set(Handles.Field_Minimum,'String',sprintf('Minimum = %f',min(Field)))
 %     
     CMax=max(Field);
     CMax=ceil(CMax/ColorIncrement)*ColorIncrement;
