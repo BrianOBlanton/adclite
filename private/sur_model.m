@@ -42,22 +42,25 @@ SelectedStorms=SortedDistanceIndex(1:N_d);
 
 
 % calculate weights, here performed component-wise
-aux1=(exp(-(Distance./D/c).^k)-exp(-(1/c)^k))./(1-exp(-(1/c)^k));
+denom=(1-exp(-(1/c)^k));
+numer=exp(-(Distance./D/c).^k)-exp(-(1/c)^k);
+aux1=numer ./  denom;
 W=diag(aux1(SelectedStorms)); 
 Ba=BasisFxns(SelectedStorms,:);
 
 % evaluation of basis functions at new point
 aux=[];
 for j=1:length(index)
-    aux=[aux;Normalized_X(index(j))*Normalized_X(index(j:length(index)))];
+    temp=Normalized_X(index(j))*Normalized_X(index(j:length(index)));
+    aux=[aux;temp];
 end
 b=[1 Normalized_X' aux'];
 
 % auxiliary matrices
-M=Ba'*W*Ba; 
 L=Ba'*W; 
+M=L*Ba; 
 % auxM are the b'*inv(M)*L coefficients in eqn 24 of Taflanidis 2012
-auxM=b/M*L;
+auxM=(b/M)*L;
 %auxM=b*inv(M)*L;
 
 % [ M ]    = [ Nb x Ns ] * [ Ns x Ns ] * [ Ns x Nb ] = [ Nb x Nb ]
@@ -68,7 +71,8 @@ auxM=b/M*L;
 % calculate response and convert to initial space
 Fi=Normalized_R(SelectedStorms,:);
 temp=auxM*Fi;
-f=temp.*std_R+mean_R;
+temp2=temp.*std_R;
+f=temp2+mean_R;
 
 
 % for debugging/understanding

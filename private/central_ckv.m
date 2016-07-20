@@ -14,17 +14,22 @@ Normalized_P=v_aux*Parameters';                %convert model parameters to norm
 %n=size(Normalized_P,1);              % number of model paramaters
 NSupportPoints=size(Normalized_P,2);  % number of support points
 
-% Evaluate basis functiona at support points  
+%% Evaluate basis functiona at support points  
 BasisFxns=[];
 for i=1:NSupportPoints
     aux=[];
     for j=1:length(index)
-        aux=[aux;Normalized_P(index(j),i)*Normalized_P(index(j:length(index)),i)];
+        temp=Normalized_P(index(j),i)*Normalized_P(index(j:length(index)),i);
+        aux=[aux;temp];
+        %size(aux)
     end
-    BasisFxns=[BasisFxns;1 Normalized_P(:,i)' aux'];
+    temp=[1 Normalized_P(:,i)' aux'];
+    %size(temp)
+    %size(BasisFxns)
+    BasisFxns=[BasisFxns;temp]; 
 end
 
-%weights for norm used in surrogate model 
+%% weights for norm used in surrogate model 
 Weight_Matrix=diag(weights./std(Normalized_P,[],2)'); 
 
 % normalize ouptut to be zero mean with unit standard deviation
