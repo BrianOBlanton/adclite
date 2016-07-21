@@ -38,7 +38,7 @@ function varargout=AdcircLite(varargin)
 
 if nargin==1
     if strcmp(varargin{1},'help')
-        fprintf('Call as: close all; AdcircLite(''Instance'',''gomex'',''Units'',''feet'')\n')
+        fprintf('Call as (e.g.): close all; AdcircLite(''FontOffset'',-2,''Units'',''feet'')\n')
         return
     end
 end
@@ -81,6 +81,7 @@ end
 %     msgbox(str)
 % end
 %     
+
 %% Initialize AdcircLite
 HOME=fileparts(which(mfilename));
 javaaddpath([HOME '/DoubleJSlider.jar']);
@@ -190,7 +191,6 @@ end
 %%% Private functions
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-
 %%  DrawDepthContours
 %%% DrawDepthContours
 %%% DrawDepthContours
@@ -228,9 +228,11 @@ function DrawDepthContours(hObj,~)
 
 end
 
+%%%%%%%%%%%%%%%%
 %%  DrawTrack
 %%% DrawTrack
 %%% DrawTrack
+%%%%%%%%%%%%%%%%
 function h=DrawTrack(track)
     
     global Debug
@@ -281,9 +283,11 @@ function h=DrawTrack(track)
     drawnow
 end
 
+%%%%%%%%%%%%%%%%
 %%  ClearUI
 %%% ClearUI
 %%% ClearUI
+%%%%%%%%%%%%%%%%
 function ClearUI(varargin)
 
     if nargin==1  % called as function
@@ -324,9 +328,11 @@ function ClearUI(varargin)
 end
 
 
+%%%%%%%%%%%%%%%%
 %%  MakeTheAxesMap
 %%% MakeTheAxesMap
 %%% MakeTheAxesMap
+%%%%%%%%%%%%%%%%
 function Handles=MakeTheAxesMap(Handles)
 
     global TheGrids Debug
@@ -403,9 +409,11 @@ function Handles=MakeTheAxesMap(Handles)
 
 end
 
+%%%%%%%%%%%%%%%%
 %%  UpdateUI
 %%% UpdateUI
 %%% UpdateUI
+%%%%%%%%%%%%%%%%
 function UpdateUI(varargin)
 
     global Debug TheGrids
@@ -472,9 +480,11 @@ function UpdateUI(varargin)
 
 end
 
+%%%%%%%%%%%%%%%%
 %%  RendererKludge
 %%% RendererKludge
 %%% RendererKludge
+%%%%%%%%%%%%%%%%
 function RendererKludge
     global EnableRendererKludge
     if EnableRendererKludge
@@ -484,17 +494,21 @@ function RendererKludge
     end
 end
 
+%%%%%%%%%%%%%%%%
 %%  SetGraphicOutputType
 %%% SetGraphicOutputType
 %%% SetGraphicOutputType
+%%%%%%%%%%%%%%%%
 function SetGraphicOutputType(hObj,~)
      SelectedType=get(get(hObj,'SelectedObject'),'String');
      SetUIStatusMessage(['Graphic Output is set to the ' SelectedType] )
 end
 
+%%%%%%%%%%%%%%%%
 %%  ExportShapeFile
 %%% ExportShapeFile
 %%% ExportShapeFile
+%%%%%%%%%%%%%%%%
 function ExportShapeFile(~,~)  
 
 %    global TheGrids Connections Debug 
@@ -557,9 +571,11 @@ function ExportShapeFile(~,~)
 
 end
 
+%%%%%%%%%%%%%%%%
 %%  GraphicOutputPrint
 %%% GraphicOutputPrint
 %%% GraphicOutputPrint
+%%%%%%%%%%%%%%%%
 function GraphicOutputPrint(~,~) 
 
 %    global Connections
@@ -671,9 +687,11 @@ function GraphicOutputPrint(~,~)
       
 end
 
+%%%%%%%%%%%%%%%%
 %%  SetTransparency
 %%% SetTransparency
 %%% SetTransparency
+%%%%%%%%%%%%%%%%
 function SetTransparency(hObj,~)
 
     FigThatCalledThisFxn=gcbf;
@@ -688,9 +706,11 @@ function SetTransparency(hObj,~)
     
 end
 
+%%%%%%%%%%%%%%%%
 %%  SetFigureRenderer
 %%% SetFigureRenderer
 %%% SetFigureRenderer
+%%%%%%%%%%%%%%%%
 function SetFigureRenderer(hObj,~) 
 
     list={'painter','zbuffer','OpenGL'};
@@ -703,9 +723,11 @@ function SetFigureRenderer(hObj,~)
 
 end
 
+%%%%%%%%%%%%%%%%
 %%  ResetAxes
 %%% ResetAxes
 %%% ResetAxes
+%%%%%%%%%%%%%%%%
 function ResetAxes(~,~)
     global Debug
     if Debug,fprintf('AdcL++ Function = %s\n',ThisFunctionName);end
@@ -724,9 +746,11 @@ function ResetAxes(~,~)
 
 end
 
+%%%%%%%%%%%%%%%%
 %%  ShowTrack
 %%% ShowTrack
 %%% ShowTrack
+%%%%%%%%%%%%%%%%
 function ShowTrack(hObj,~) 
 
     global Connections Debug 
@@ -2255,16 +2279,18 @@ function ShowMapThings(hObj,~)
     
 end
 
-
-
-%%  GetColors
+%%   GetColors
+%%%  GetColors
+%%%  GetColors
 % function [minThisData,maxThisData,NumberOfColors]=GetColors(Handles)
 %      maxThisData=str2double(get(Handles.CMax));
 %      minThisData=str2double(get(Handles.CMin));
 %      NumberOfColors=str2int(get(Handles.NCol));
 % end
 
-%%  SetTitle
+%%   SetTitle
+%%%  SetTitle
+%%%  SetTitle
 function SetTitle(str)
     title(str,'FontWeight','bold') 
 end
@@ -2308,7 +2334,6 @@ function SetTitleOld(RunProperties)
         %t=datenum(t,DateStringFormat);
     
     end
-    
     
 %    LowerString=datestr((datenum(currentdate,'yymmdd')+...
 %        (NowcastForecastOffset)/24+LocalTimeOffset/24),'ddd, dd mmm, HH PM');
